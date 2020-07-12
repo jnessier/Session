@@ -30,6 +30,7 @@
     "slim/psr7": "^1.1",
     "phpunit/phpunit": "^9.2",
     "middlewares/utils": "^3.1",
-    "php-coveralls/php-coveralls": "^2.2"
+    "php-coveralls/php-coveralls": "^2.2",
+    "pds/skeleton": "^1.0"
   }
 }
