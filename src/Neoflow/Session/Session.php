@@ -4,7 +4,7 @@ namespace Neoflow\Session;
 
 use RuntimeException;
 
-class Session
+final class Session
 {
     /**
      * @var Flash
