@@ -1,8 +1,11 @@
 # Session
 [![Build Status](https://travis-ci.org/Neoflow/Session.svg?branch=master&service=github)](https://travis-ci.org/Neoflow/Session)
 [![Coverage Status](https://coveralls.io/repos/github/Neoflow/Session/badge.svg?branch=master&service=github)](https://coveralls.io/github/Neoflow/Session?branch=master)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
- 
+[![Latest Stable Version](https://poser.pugx.org/neoflow/session/v)](https://packagist.org/packages/neoflow/session)
+[![Latest Unstable Version](https://poser.pugx.org/neoflow/session/v/unstable)](https://packagist.org/packages/neoflow/session)
+[![Total Downloads](https://poser.pugx.org/neoflow/session/downloads)](//packagist.org/packages/neoflow/session)
+[![License](https://poser.pugx.org/neoflow/session/license)](https://packagist.org/packages/neoflow/session)
+
 Session middleware with flash message support for Slim 4 and similar [PSR-15](https://www.php-fig.org/psr/psr-15/)
  compliant frameworks and apps.
 
