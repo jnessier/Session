@@ -212,6 +212,11 @@ $result = $session->flash()->apply(function (Neoflow\Session\Flash $flash, strin
 ## Contributors
 * Jonathan Nessier, [Neoflow](https://www.neoflow.ch)
 
+If you would like to see this library develop further, or if you want to support me or show me your appreciation, please
+ donate any amount through PayPal. Thank you! :beers:
+ 
+[![Donate](https://img.shields.io/badge/Donate-paypal-blue)](https://www.paypal.me/JonathanNessier)
+
 ## History
 A long time ago in a galaxy far, far away.... oh sorry, wrong chapter. :stuck_out_tongue_winking_eye: 
 
