@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
  
 Session middleware with flash message support for Slim 4 and similar [PSR-15](https://www.php-fig.org/psr/psr-15/)
- compliant frameworks and apps. 
+ compliant frameworks and apps.
 
 ## Requirement
 * PHP >= 7.4
@@ -19,10 +19,10 @@ composer require neoflow/session
 
 Or manually add this line to the `require` block in your `composer.json`:
 ```json
-"neoflow/session": "~0.1"
+"neoflow/session": "^1.0.0@alpha"
 ```
 ## Manual
-The following instructions based on Slim 4, but should be adaptable any PSR-15 compliant frameworks and apps.
+The following instructions based on Slim 4, but should be adaptable for any PSR-15 compliant frameworks and apps.
 
 ### Middleware
 Add the `Neoflow\Session\Middleware\SessionMiddleware` to the middleware dispatcher. 
@@ -45,8 +45,8 @@ The following options are supported:
 | ```flashKey``` | string | Key for flash messages.  | _flashMessages |
 
 ### Helper
-Use `Neoflow\Session\Session` and `Neoflow\Session\Flash` as helper, to get extended functionality for the
- session handling, and the ability to manage and get access to session data and flash messages.
+Use `Neoflow\Session\Session` and `Neoflow\Session\Flash` as helper, to get extended functionality for the session
+ handling, and the ability to manage and get access to session data and flash messages.
   
 #### Initialization
 You have 2 options to set up and initialize the helper. 
@@ -70,7 +70,7 @@ $app->get('/', function (Request $request, Response $response) {
     return $response;
 });
 ```
-Or enable option `withAttribute` for the `Neoflow\Session\Middleware\SessionMiddleware`...
+Or enable the option `withAttribute` for the `Neoflow\Session\Middleware\SessionMiddleware`...
 ```php
 $app->add(new Neoflow\Session\Middleware\SessionMiddleware([
     'withAttribute' => true
@@ -88,7 +88,7 @@ $app->get('/', function (Psr\Http\Message\RequestInterface $request, Psr\Http\Me
 ```
 
 **Important:** 
-Don't use both options simultaneously. 
+Don't use both initialization options simultaneously. 
 It's important to set up the helper only once. 
 Otherwise, it can cause data conflicts with the flash messages.
  
