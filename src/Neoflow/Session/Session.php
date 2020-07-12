@@ -21,6 +21,7 @@ final class Session
      *
      * @param Flash $flash
      * @param string $key
+     * @throws RuntimeException
      */
     public function __construct(Flash $flash, string $key = '_sessionData')
     {
@@ -83,6 +84,7 @@ final class Session
      * Destroy session
      *
      * @return bool
+     * @throws RuntimeException
      */
     public function destroy(): bool
     {

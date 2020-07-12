@@ -20,6 +20,7 @@ final class Flash
      * Constructor.
      *
      * @param string $key
+     * @throws RuntimeException
      */
     public function __construct(string $key = '_flashMessages')
     {
