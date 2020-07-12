@@ -1,7 +1,6 @@
 {
   "name": "neoflow/session",
-  "description": "Session middleware with flash message support for Slim Framework 4 and similar PSR-15 compliant frameworks and apps.",
-  "type": "library",
+  "description": "Session middleware with flash message support for Slim 4 and similar PSR-15 compliant frameworks and apps.",
   "license": "MIT",
   "minimum-stability": "stable",
   "authors": [
@@ -19,12 +18,12 @@
   "scripts": {
     "run php-cs-fixer": "php-cs-fixer fix",
     "run php-cs-fixer dry": "php-cs-fixer fix --dry-run",
-    "run phpunit": "phpunit --configuration phpunit.xml.dist",
-    "run phpunit coverage": "phpunit --coverage-html build/coverage-report --configuration phpunit.xml.dist"
+    "run phpunit": "phpunit --configuration phpunit.xml.dist"
   },
   "require": {
     "psr/http-message": "^1.0",
-    "psr/http-server-middleware": "^1.0"
+    "psr/http-server-middleware": "^1.0",
+    "php": "^7.4"
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^2.16",
