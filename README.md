@@ -1,10 +1,10 @@
 # Session
 [![Build Status](https://travis-ci.org/Neoflow/Session.svg?branch=master&service=github)](https://travis-ci.org/Neoflow/Session)
 [![Coverage Status](https://coveralls.io/repos/github/Neoflow/Session/badge.svg?branch=master&service=github)](https://coveralls.io/github/Neoflow/Session?branch=master)
-[![Latest Stable Version](https://poser.pugx.org/neoflow/session/v)](https://packagist.org/packages/neoflow/session)
-[![Latest Unstable Version](https://poser.pugx.org/neoflow/session/v/unstable)](https://packagist.org/packages/neoflow/session)
-[![Total Downloads](https://poser.pugx.org/neoflow/session/downloads)](//packagist.org/packages/neoflow/session)
-[![License](https://poser.pugx.org/neoflow/session/license)](https://packagist.org/packages/neoflow/session)
+[![Latest Stable Version](https://poser.pugx.org/neoflow/session/v?service=github)](https://packagist.org/packages/neoflow/session)
+[![Latest Unstable Version](https://poser.pugx.org/neoflow/session/v/unstable?service=github)](https://packagist.org/packages/neoflow/session)
+[![Total Downloads](https://poser.pugx.org/neoflow/session/downloads?service=github)](//packagist.org/packages/neoflow/session)
+[![License](https://poser.pugx.org/neoflow/session/license?service=github)](https://packagist.org/packages/neoflow/session)
 
 Session middleware with flash message support for Slim 4 and similar [PSR-15](https://www.php-fig.org/psr/psr-15/)
  compliant frameworks and apps.
@@ -160,7 +160,7 @@ $exists = $session->flash()->exists('key');
 // Get flash message by key, or default value when the key doesn't exists 
 $value = $session->flash()->get('key', 'default');
 
-// Get flash messages as array (set in previous request)
+// Get flash messages as array
 $array = $session->flash()->toArray();
 
 // Iterate trough the flash messages
