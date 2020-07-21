@@ -142,7 +142,7 @@ $flash = $session->merge([
 $array = $session->toArray();
 
 // Apply a callback with arguments to the session data
-$result = $session->apply(function (Neoflow\Session\Session $session, string $arg1, string $arg2) {
+$result = $session->apply(function (Neoflow\Session\SessionInterface $session, string $arg1, string $arg2) {
     // Your custom code
 }, [
     'arg1',
@@ -207,7 +207,7 @@ $result = $session->flash()->eachNew(function (string $key, $value) {
 Examples how to manage both types of flash messages:
 ```php
 // Apply a callback with arguments to the flash helper
-$result = $session->flash()->apply(function (Neoflow\Session\Flash $flash, string $arg, string $arg2) {
+$result = $session->flash()->apply(function (Neoflow\Session\FlashInterface $flash, string $arg, string $arg2) {
    // Your custom code
 }, [
    'arg',
