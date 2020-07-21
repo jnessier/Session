@@ -1,7 +1,6 @@
 <?php
 
 use Middlewares\Utils\Dispatcher;
-use Middlewares\Utils\Factory;
 use Neoflow\Session\Flash;
 use Neoflow\Session\FlashInterface;
 use Neoflow\Session\Middleware\SessionMiddleware;

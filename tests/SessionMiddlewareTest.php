@@ -1,8 +1,6 @@
 <?php
 
 use Middlewares\Utils\Dispatcher;
-use Middlewares\Utils\Factory;
-use Neoflow\Session\Flash;
 use Neoflow\Session\Middleware\SessionMiddleware;
 use Neoflow\Session\Session;
 use PHPUnit\Framework\TestCase;
@@ -33,7 +31,5 @@ class SessionMiddlewareTest extends TestCase
                 $handler->handle($request);
             },
         ]);
-
-
     }
 }

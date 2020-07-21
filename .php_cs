@@ -19,7 +19,6 @@ return PhpCsFixer\Config::create()
     ->setRules([
         '@PSR1' => true,
         '@PSR2' => true,
-        //'@Symfony' => true,
         'semicolon_after_instruction' => false,
     ])
     ->setFinder($finder);
