@@ -15,7 +15,7 @@ class SessionMiddleware implements MiddlewareInterface
     /**
      * @var array
      */
-    protected array $options = [
+    protected $options = [
         'name' => 'SID',
         'lifetime' => 3600,
         'autoRefresh' => true,

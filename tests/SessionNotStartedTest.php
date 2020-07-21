@@ -6,14 +6,14 @@ use PHPUnit\Framework\TestCase;
 
 class SessionNotStartedTest extends TestCase
 {
-    public function testFlash()
+    public function testFlash(): void
     {
         $this->expectException(RuntimeException::class);
 
         new Flash();
     }
 
-    public function testSession()
+    public function testSession(): void
     {
         $this->expectException(RuntimeException::class);
 

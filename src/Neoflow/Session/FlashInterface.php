@@ -2,8 +2,6 @@
 
 namespace Neoflow\Session;
 
-use RuntimeException;
-
 interface FlashInterface
 {
     /**

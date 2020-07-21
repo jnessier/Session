@@ -9,12 +9,12 @@ final class Session implements SessionInterface
     /**
      * @var FlashInterface
      */
-    protected FlashInterface $flash;
+    protected $flash;
 
     /**
      * @var string
      */
-    protected string $key = '_sessionData';
+    protected $key = '_sessionData';
 
     /**
      * Constructor
@@ -63,7 +63,7 @@ final class Session implements SessionInterface
      * @param bool $deleteOldSession
      * @return self
      */
-    public function generateId(bool $deleteOldSession = false): self
+    public function generateId(bool $deleteOldSession = false): SessionInterface
     {
         session_regenerate_id($deleteOldSession);
 
@@ -140,7 +140,7 @@ final class Session implements SessionInterface
      * @param mixed $value
      * @return self
      */
-    public function set(string $key, $value): self
+    public function set(string $key, $value): SessionInterface
     {
         $_SESSION[$this->key][$key] = $value;
 
@@ -153,7 +153,7 @@ final class Session implements SessionInterface
      * @param string $key
      * @return self
      */
-    public function delete(string $key): self
+    public function delete(string $key): SessionInterface
     {
         if ($this->exists($key)) {
             unset($_SESSION[$this->key][$key]);
@@ -169,7 +169,7 @@ final class Session implements SessionInterface
      * @param bool $recursive
      * @return self
      */
-    public function merge(array $data, bool $recursive = true): self
+    public function merge(array $data, bool $recursive = true): SessionInterface
     {
         if ($recursive) {
             $_SESSION[$this->key] = array_replace_recursive($_SESSION[$this->key], $data);

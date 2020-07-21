@@ -11,7 +11,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class SessionMiddlewareTest extends TestCase
 {
-    public function testSessionMiddlware()
+    public function testSessionMiddlware(): void
     {
         Dispatcher::run([
             new SessionMiddleware(),
@@ -21,7 +21,7 @@ class SessionMiddlewareTest extends TestCase
         $this->assertIsString(session_id());
     }
 
-    public function testSessionMiddlewareWithAttribute()
+    public function testSessionMiddlewareWithAttribute(): void
     {
         Dispatcher::run([
             new SessionMiddleware([

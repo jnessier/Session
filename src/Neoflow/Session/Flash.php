@@ -9,12 +9,12 @@ final class Flash implements FlashInterface
     /**
      * @var array
      */
-    protected array $messages = [];
+    protected $messages = [];
 
     /**
      * @var string
      */
-    protected string $key = '_flashMessages';
+    protected $key = '_flashMessages';
 
     /**
      * Constructor.
@@ -95,7 +95,7 @@ final class Flash implements FlashInterface
      * @param mixed $value
      * @return self
      */
-    public function setNew(string $key, $value): self
+    public function setNew(string $key, $value): FlashInterface
     {
         $_SESSION[$this->key][$key] = $value;
 
@@ -135,7 +135,7 @@ final class Flash implements FlashInterface
      * @param string $key
      * @return self
      */
-    public function deleteNew(string $key): self
+    public function deleteNew(string $key): FlashInterface
     {
         if ($this->existsNew($key)) {
             unset($_SESSION[$this->key][$key]);
@@ -151,7 +151,7 @@ final class Flash implements FlashInterface
      * @param bool $recursive
      * @return self
      */
-    public function mergeNew(array $messages, bool $recursive = true): self
+    public function mergeNew(array $messages, bool $recursive = true): FlashInterface
     {
         if ($recursive) {
             $_SESSION[$this->key] = array_replace_recursive($_SESSION[$this->key], $messages);

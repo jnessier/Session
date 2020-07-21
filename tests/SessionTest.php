@@ -4,11 +4,15 @@ use Middlewares\Utils\Dispatcher;
 use Neoflow\Session\Flash;
 use Neoflow\Session\Middleware\SessionMiddleware;
 use Neoflow\Session\Session;
+use Neoflow\Session\SessionInterface;
 use PHPUnit\Framework\TestCase;
 
 class SessionTest extends TestCase
 {
-    protected Session $session;
+    /**
+     * @var SessionInterface
+     */
+    protected $session;
 
     protected function setUp(): void
     {
@@ -24,38 +28,38 @@ class SessionTest extends TestCase
         $this->session = new Session($flash, '_testSessionData');
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $this->assertSame('A', $this->session->get('a'));
         $this->assertSame('default', $this->session->get('b', 'default'));
     }
 
-    public function testExists()
+    public function testExists(): void
     {
         $this->assertTrue($this->session->exists('a'));
         $this->assertFalse($this->session->exists('b'));
     }
 
-    public function testSet()
+    public function testSet(): void
     {
         $this->session->set('b', 'B');
 
         $this->assertSame('B', $this->session->get('b'));
     }
 
-    public function testDelete()
+    public function testDelete(): void
     {
         $this->session->delete('a');
 
         $this->assertFalse($this->session->exists('a'));
     }
 
-    public function testGetId()
+    public function testGetId(): void
     {
         $this->assertIsString($this->session->getId());
     }
 
-    public function testGenerateId()
+    public function testGenerateId(): void
     {
         $oldId = $this->session->getId();
         $this->session->generateId();
@@ -63,13 +67,13 @@ class SessionTest extends TestCase
         $this->assertNotSame($oldId, $this->session->getId());
     }
 
-    public function testDestroy()
+    public function testDestroy(): void
     {
         $this->assertTrue($this->session->destroy());
         $this->assertSame(PHP_SESSION_NONE, $this->session->getStatus());
     }
 
-    public function testInvalidDestroy()
+    public function testInvalidDestroy(): void
     {
         $this->session->destroy();
 
@@ -78,24 +82,24 @@ class SessionTest extends TestCase
         $this->session->destroy();
     }
 
-    public function testGetStatus()
+    public function testGetStatus(): void
     {
         $this->assertSame(PHP_SESSION_ACTIVE, $this->session->getStatus());
     }
 
-    public function testGetName()
+    public function testGetName(): void
     {
         $this->assertSame('SID', $this->session->getName());
     }
 
-    public function testToArray()
+    public function testToArray(): void
     {
         $this->assertSame([
             'a' => 'A',
         ], $this->session->toArray());
     }
 
-    public function testMergeRecursive()
+    public function testMergeRecursive(): void
     {
         $this->session->set('b', [
             'c' => 'C',
@@ -118,7 +122,7 @@ class SessionTest extends TestCase
         ], $this->session->toArray());
     }
 
-    public function testMerge()
+    public function testMerge(): void
     {
         $this->session->set('b', [
             'c' => 'C',
@@ -140,7 +144,7 @@ class SessionTest extends TestCase
         ], $this->session->toArray());
     }
 
-    public function testApply()
+    public function testApply(): void
     {
         $result = $this->session->apply(function (Session $session, string $value) {
             return $session->get('a').$value;
@@ -151,7 +155,7 @@ class SessionTest extends TestCase
         $this->assertSame('AB', $result);
     }
 
-    public function testEach()
+    public function testEach(): void
     {
         $this->session->each(function ($value, $key) {
             $this->assertArrayHasKey($key, $this->session->toArray());
@@ -159,7 +163,7 @@ class SessionTest extends TestCase
         });
     }
 
-    public function testFlash()
+    public function testFlash(): void
     {
         $this->assertInstanceOf(Flash::class, $this->session->flash());
     }

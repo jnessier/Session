@@ -3,12 +3,16 @@
 use Middlewares\Utils\Dispatcher;
 use Middlewares\Utils\Factory;
 use Neoflow\Session\Flash;
+use Neoflow\Session\FlashInterface;
 use Neoflow\Session\Middleware\SessionMiddleware;
 use PHPUnit\Framework\TestCase;
 
 class FlashTest extends TestCase
 {
-    protected Flash $flash;
+    /**
+     * @var FlashInterface
+     */
+    protected $flash;
 
     protected function setUp(): void
     {
@@ -25,19 +29,19 @@ class FlashTest extends TestCase
         $this->flash->setNew('b', 'B');
     }
 
-    public function testExists()
+    public function testExists(): void
     {
         $this->assertTrue($this->flash->exists('a'));
         $this->assertFalse($this->flash->exists('c'));
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $this->assertSame('A', $this->flash->get('a'));
         $this->assertSame('default', $this->flash->get('b', 'default'));
     }
 
-    public function testSetNew()
+    public function testSetNew(): void
     {
         $this->flash->setNew('c', 'C');
 
@@ -45,26 +49,26 @@ class FlashTest extends TestCase
         $this->assertTrue($this->flash->existsNew('c'));
     }
 
-    public function testDeleteNew()
+    public function testDeleteNew(): void
     {
         $this->flash->deleteNew('b');
 
         $this->assertFalse($this->flash->existsNew('a'));
     }
 
-    public function testExistsNew()
+    public function testExistsNew(): void
     {
         $this->assertTrue($this->flash->existsNew('b'));
         $this->assertFalse($this->flash->existsNew('c'));
     }
 
-    public function testGetNew()
+    public function testGetNew(): void
     {
         $this->assertSame('B', $this->flash->getNew('b'));
         $this->assertSame('default', $this->flash->getNew('c', 'default'));
     }
 
-    public function testEach()
+    public function testEach(): void
     {
         $this->flash->each(function ($value, $key) {
             $this->assertSame('a', $key);
@@ -72,7 +76,7 @@ class FlashTest extends TestCase
         });
     }
 
-    public function testEachNew()
+    public function testEachNew(): void
     {
         $this->flash->eachNew(function ($value, $key) {
             $this->assertSame('b', $key);
@@ -80,59 +84,59 @@ class FlashTest extends TestCase
         });
     }
 
-    public function testMergeNewRecursive()
+    public function testMergeNewRecursive(): void
     {
         $this->flash->setNew('c', [
             'd' => 'D',
-            'e' => 'E'
+            'e' => 'E',
         ]);
 
         $this->flash->mergeNew([
             'b' => 'SpecialB',
             'c' => [
                 'e' => 'SpecialE',
-            ]
+            ],
         ]);
 
         $this->assertSame([
             'b' => 'SpecialB',
             'c' => [
                 'd' => 'D',
-                'e' => 'SpecialE'
+                'e' => 'SpecialE',
             ],
         ], $this->flash->toArrayNew());
     }
 
-    public function testMergeNew()
+    public function testMergeNew(): void
     {
         $this->flash->setNew('c', [
             'd' => 'D',
-            'e' => 'E'
+            'e' => 'E',
         ]);
 
         $this->flash->mergeNew([
             'b' => 'SpecialB',
             'c' => [
                 'e' => 'SpecialE',
-            ]
+            ],
         ], false);
 
         $this->assertSame([
             'b' => 'SpecialB',
             'c' => [
-                'e' => 'SpecialE'
+                'e' => 'SpecialE',
             ],
         ], $this->flash->toArrayNew());
     }
 
-    public function testToArray()
+    public function testToArray(): void
     {
         $this->assertSame([
             'a' => 'A',
         ], $this->flash->toArray());
     }
 
-    public function testToArrayNew()
+    public function testToArrayNew(): void
     {
         $this->flash->setNew('b', 'B');
 

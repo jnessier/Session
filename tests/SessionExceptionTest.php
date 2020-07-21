@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class SessionExceptionTest extends TestCase
 {
-    public function testSessionMiddleware()
+    public function testSessionMiddleware(): void
     {
         $this->expectException(SessionException::class);
         $this->expectExceptionMessage('Session already started.');
@@ -21,7 +21,7 @@ class SessionExceptionTest extends TestCase
         ]);
     }
 
-    public function testFlash()
+    public function testFlash(): void
     {
         $this->expectException(SessionException::class);
         $this->expectExceptionMessage('Session not started yet.');
@@ -29,7 +29,7 @@ class SessionExceptionTest extends TestCase
         new Flash();
     }
 
-    public function testSession()
+    public function testSession(): void
     {
         $this->expectException(SessionException::class);
         $this->expectExceptionMessage('Session not started yet.');
