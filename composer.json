@@ -10,10 +10,9 @@
     }
   ],
   "autoload": {
-    "classmap": [
-      "src"
-    ],
-    "files": []
+    "psr-4": {
+      "": "src/"
+    }
   },
   "scripts": {
     "run php-cs-fixer": "php-cs-fixer fix",
