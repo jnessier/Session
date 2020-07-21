@@ -166,11 +166,16 @@ final class Session implements SessionInterface
      * Merge multiple keys and values of session data
      *
      * @param array $data
+     * @param bool $recursive
      * @return self
      */
-    public function merge(array $data): self
+    public function merge(array $data, bool $recursive = true): self
     {
-        $_SESSION[$this->key] = array_replace($_SESSION[$this->key], $data);
+        if ($recursive) {
+            $_SESSION[$this->key] = array_replace_recursive($_SESSION[$this->key], $data);
+        } else {
+            $_SESSION[$this->key] = array_replace($_SESSION[$this->key], $data);
+        }
 
         return $this;
     }

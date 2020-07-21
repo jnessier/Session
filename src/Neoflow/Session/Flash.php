@@ -148,11 +148,16 @@ final class Flash implements FlashInterface
      * Merge multiple keys and values of flash messages.
      *
      * @param array $messages
+     * @param bool $recursive
      * @return self
      */
-    public function mergeNew(array $messages): self
+    public function mergeNew(array $messages, bool $recursive = true): self
     {
-        $_SESSION[$this->key] = array_replace($_SESSION[$this->key], $messages);
+        if ($recursive) {
+            $_SESSION[$this->key] = array_replace_recursive($_SESSION[$this->key], $messages);
+        } else {
+            $_SESSION[$this->key] = array_replace($_SESSION[$this->key], $messages);
+        }
 
         return $this;
     }

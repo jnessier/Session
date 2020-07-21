@@ -80,19 +80,48 @@ class FlashTest extends TestCase
         });
     }
 
-    public function testMergeNew()
+    public function testMergeNewRecursive()
     {
-        $this->flash->setNew('c', 'C');
+        $this->flash->setNew('c', [
+            'd' => 'D',
+            'e' => 'E'
+        ]);
 
         $this->flash->mergeNew([
-            'a' => 'SpecialA',
-            'b' => 'B',
+            'b' => 'SpecialB',
+            'c' => [
+                'e' => 'SpecialE',
+            ]
         ]);
 
         $this->assertSame([
-            'b' => 'B',
-            'c' => 'C',
-            'a' => 'SpecialA',
+            'b' => 'SpecialB',
+            'c' => [
+                'd' => 'D',
+                'e' => 'SpecialE'
+            ],
+        ], $this->flash->toArrayNew());
+    }
+
+    public function testMergeNew()
+    {
+        $this->flash->setNew('c', [
+            'd' => 'D',
+            'e' => 'E'
+        ]);
+
+        $this->flash->mergeNew([
+            'b' => 'SpecialB',
+            'c' => [
+                'e' => 'SpecialE',
+            ]
+        ], false);
+
+        $this->assertSame([
+            'b' => 'SpecialB',
+            'c' => [
+                'e' => 'SpecialE'
+            ],
         ], $this->flash->toArrayNew());
     }
 

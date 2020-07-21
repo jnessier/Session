@@ -95,19 +95,48 @@ class SessionTest extends TestCase
         ], $this->session->toArray());
     }
 
-    public function testMerge()
+    public function testMergeRecursive()
     {
-        $this->session->set('c', 'C');
+        $this->session->set('b', [
+            'c' => 'C',
+            'd' => 'D'
+        ]);
 
         $this->session->merge([
             'a' => 'SpecialA',
-            'b' => 'B',
+            'b' => [
+                'd' => 'SpecialD',
+            ]
         ]);
 
         $this->assertSame([
             'a' => 'SpecialA',
+            'b' => [
+                'c' => 'C',
+                'd' => 'SpecialD'
+            ],
+        ], $this->session->toArray());
+    }
+
+    public function testMerge()
+    {
+        $this->session->set('b', [
             'c' => 'C',
-            'b' => 'B',
+            'd' => 'D'
+        ]);
+
+        $this->session->merge([
+            'a' => 'SpecialA',
+            'b' => [
+                'd' => 'SpecialD',
+            ]
+        ], false);
+
+        $this->assertSame([
+            'a' => 'SpecialA',
+            'b' => [
+                'd' => 'SpecialD',
+            ]
         ], $this->session->toArray());
     }
 

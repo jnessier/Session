@@ -129,11 +129,14 @@ $session = $session->set('key', 'value');
 // Delete session value by key
 $deleted = $session->delete('key');
 
-// Merge multiple keys and values of session data
+// Merge recursively multiple keys and values of session data
+$recursive = true;
 $flash = $session->merge([
     'key' => 'value',
-    'key2' => 'value2'
-]);
+    'key2' => [
+       'key3' => 'value3'     
+    ]
+], $recursive);
 
 // Get session data as array
 $array = $session->toArray();
@@ -183,11 +186,14 @@ $value = $session->flash()->getNew('key', 'default');
 // Delete new flash message by key
 $deleted = $session->flash()->deleteNew('key');
 
-// Merge multiple keys and values of flash messages
+// Merge recursively multiple keys and values of new flash messages
+$recursive = true;
 $flash = $session->flash()->mergeNew([
     'key' => 'value',
-    'key2' => 'value2'
-]);
+    'key2' => [
+       'key3' => 'value3'     
+    ]
+], $recursive);
 
 // Get new flash messages as array
 $array = $session->flash()->toArrayNew();
