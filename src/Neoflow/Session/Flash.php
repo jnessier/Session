@@ -2,7 +2,7 @@
 
 namespace Neoflow\Session;
 
-use RuntimeException;
+use Neoflow\Session\Exception\SessionException;
 
 final class Flash implements FlashInterface
 {
@@ -20,12 +20,12 @@ final class Flash implements FlashInterface
      * Constructor.
      *
      * @param string $key
-     * @throws RuntimeException
+     * @throws SessionException
      */
     public function __construct(string $key = '_flashMessages')
     {
         if (PHP_SESSION_ACTIVE !== session_status()) {
-            throw new RuntimeException('Session not started yet.');
+            throw new SessionException('Session not started yet.');
         }
 
         $this->key = $key;

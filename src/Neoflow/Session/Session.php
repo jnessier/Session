@@ -2,7 +2,7 @@
 
 namespace Neoflow\Session;
 
-use RuntimeException;
+use Neoflow\Session\Exception\SessionException;
 
 final class Session implements SessionInterface
 {
@@ -21,12 +21,12 @@ final class Session implements SessionInterface
      *
      * @param FlashInterface $flash
      * @param string $key
-     * @throws RuntimeException
+     * @throws SessionException
      */
     public function __construct(FlashInterface $flash, string $key = '_sessionData')
     {
         if (PHP_SESSION_ACTIVE !== session_status()) {
-            throw new RuntimeException('Session not started yet.');
+            throw new SessionException('Session not started yet.');
         }
 
         $this->flash = $flash;
@@ -84,7 +84,7 @@ final class Session implements SessionInterface
      * Destroy session
      *
      * @return bool
-     * @throws RuntimeException
+     * @throws SessionException
      */
     public function destroy(): bool
     {
@@ -92,7 +92,7 @@ final class Session implements SessionInterface
             return session_destroy();
         }
 
-        throw new RuntimeException('Session already destroyed.');
+        throw new SessionException('Session already destroyed.');
     }
 
     /**
