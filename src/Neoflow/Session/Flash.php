@@ -4,7 +4,7 @@ namespace Neoflow\Session;
 
 use RuntimeException;
 
-final class Flash
+final class Flash implements FlashInterface
 {
     /**
      * @var array
