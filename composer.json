@@ -11,13 +11,18 @@
   ],
   "autoload": {
     "psr-4": {
-      "Neoflow\\Session\\": "src/"
+      "Neoflow\\Session\\": "src/Neoflow/Session/"
+    },
+    "autoload-dev": {
+      "psr-4": {
+        "Neoflow\\Session\\Test\\": "tests/"
+      }
     }
   },
   "scripts": {
     "run php-cs-fixer": "php-cs-fixer fix",
     "run php-cs-fixer dry": "php-cs-fixer fix --dry-run",
-    "run phpunit": "phpunit --configuration phpunit.xml.dist"
+    "run phpunit": "phpunit --configuration phpunit.xml.dist",
   },
   "require": {
     "psr/http-message": "^1.0",
