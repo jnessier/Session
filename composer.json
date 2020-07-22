@@ -22,7 +22,7 @@
   "scripts": {
     "run php-cs-fixer": "php-cs-fixer fix",
     "run php-cs-fixer dry": "php-cs-fixer fix --dry-run",
-    "run phpunit": "phpunit --configuration phpunit.xml.dist",
+    "run phpunit": "phpunit --configuration phpunit.xml.dist"
   },
   "require": {
     "psr/http-message": "^1.0",
