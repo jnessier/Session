@@ -11,7 +11,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "Neoflow\\Session\\": "src/Neoflow/Session/"
+      "Neoflow\\Session\\": "src/"
     },
     "autoload-dev": {
       "psr-4": {
