@@ -11,7 +11,12 @@
   ],
   "autoload": {
     "psr-4": {
-      "": "src/"
+      "Neoflow\\Session\\": "src/Neoflow/Session/"
+    },
+    "autoload-dev": {
+      "psr-4": {
+        "Neoflow\\Session\\Test\\": "tests/"
+      }
     }
   },
   "scripts": {

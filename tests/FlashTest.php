@@ -1,5 +1,7 @@
 <?php
 
+namespace Neoflow\Session\Test;
+
 use Middlewares\Utils\Dispatcher;
 use Neoflow\Session\Flash;
 use Neoflow\Session\FlashInterface;

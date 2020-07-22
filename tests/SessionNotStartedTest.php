@@ -1,8 +1,11 @@
 <?php
 
+namespace Neoflow\Session\Test;
+
 use Neoflow\Session\Flash;
 use Neoflow\Session\Session;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 class SessionNotStartedTest extends TestCase
 {
