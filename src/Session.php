@@ -4,7 +4,7 @@ namespace Neoflow\Session;
 
 use Neoflow\Session\Exception\SessionException;
 
-final class Session implements SessionInterface
+class Session implements SessionInterface
 {
     /**
      * @var FlashInterface
