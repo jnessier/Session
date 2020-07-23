@@ -147,10 +147,38 @@ class SessionTest extends TestCase
         ], $this->session->toArray());
     }
 
+    public function testExportImport(): void
+    {
+        $this->session->set('b', [
+            'c' => 'C',
+            'd' => 'D'
+        ]);
+
+        $sessionArray = $this->session->toArray();
+
+        foreach ($sessionArray as $key => $value) {
+            if ($key === 'a') {
+                $sessionArray['a'] = 'SpecialA';
+            }
+        }
+
+        $sessionArray['b']['c'] = 'SpecialC';
+
+        $this->session->merge($sessionArray);
+
+        $this->assertSame([
+            'a' => 'SpecialA',
+            'b' => [
+                'c' => 'SpecialC',
+                'd' => 'D'
+            ]
+        ], $this->session->toArray());
+    }
+
     public function testApply(): void
     {
         $result = $this->session->apply(function (Session $session, string $value) {
-            return $session->get('a').$value;
+            return $session->get('a') . $value;
         }, [
             'B',
         ]);
