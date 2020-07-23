@@ -22,8 +22,9 @@ composer require neoflow/session
 
 Or manually add this line to the `require` block in your `composer.json`:
 ```json
-"neoflow/session": "^1.0.0@beta"
+"neoflow/session": "^1.0.0"
 ```
+
 ## Manual
 The following instructions based on Slim 4, but should be adaptable for any PSR-15 compliant frameworks and apps.
 
