@@ -216,6 +216,12 @@ $result = $session->flash()->apply(function (Neoflow\Session\FlashInterface $fla
 ]);
 ```
 
+#### Dot notation
+Both helper classes have [adbario/php-dot-notation](https://github.com/adbario/php-dot-notation) implemented and support
+ a few data access features with dot notation in a light and fast way.
+ 
+Please take a look into the readme of the library to learn more about the usage. 
+
 ## Contributors
 * Jonathan Nessier, [Neoflow](https://www.neoflow.ch)
 
