@@ -2,6 +2,7 @@
 
 namespace Neoflow\Session;
 
+use Adbar\Dot;
 use Neoflow\Session\Exception\SessionException;
 
 class Session implements SessionInterface
@@ -12,9 +13,9 @@ class Session implements SessionInterface
     protected $flash;
 
     /**
-     * @var string
+     * @var Dot
      */
-    protected $key = '_sessionData';
+    protected $data;
 
     /**
      * Constructor
@@ -30,11 +31,13 @@ class Session implements SessionInterface
         }
 
         $this->flash = $flash;
-        $this->key = $key;
 
-        if (!isset($_SESSION[$this->key])) {
-            $_SESSION[$this->key] = [];
+        if (!isset($_SESSION[$key])) {
+            $_SESSION[$key] = [];
         }
+
+        $this->data = new Dot();
+        $this->data->setReference($_SESSION[$key]);
     }
 
     /**
@@ -115,11 +118,7 @@ class Session implements SessionInterface
      */
     public function get(string $key, $default = null)
     {
-        if ($this->exists($key)) {
-            return $_SESSION[$this->key][$key];
-        }
-
-        return $default;
+        return $this->data->get($key, $default);
     }
 
     /**
@@ -130,7 +129,7 @@ class Session implements SessionInterface
      */
     public function exists(string $key): bool
     {
-        return array_key_exists($key, $_SESSION[$this->key]);
+        return $this->data->has($key);
     }
 
     /**
@@ -142,7 +141,7 @@ class Session implements SessionInterface
      */
     public function set(string $key, $value): SessionInterface
     {
-        $_SESSION[$this->key][$key] = $value;
+        $this->data->set($key, $value);
 
         return $this;
     }
@@ -155,9 +154,7 @@ class Session implements SessionInterface
      */
     public function delete(string $key): SessionInterface
     {
-        if ($this->exists($key)) {
-            unset($_SESSION[$this->key][$key]);
-        }
+        $this->data->delete($key);
 
         return $this;
     }
@@ -172,9 +169,9 @@ class Session implements SessionInterface
     public function merge(array $data, bool $recursive = true): SessionInterface
     {
         if ($recursive) {
-            $_SESSION[$this->key] = array_replace_recursive($_SESSION[$this->key], $data);
+            $this->data->mergeRecursiveDistinct($data);
         } else {
-            $_SESSION[$this->key] = array_replace($_SESSION[$this->key], $data);
+            $this->data->merge($data);
         }
 
         return $this;
@@ -187,7 +184,7 @@ class Session implements SessionInterface
      */
     public function toArray(): array
     {
-        return $_SESSION[$this->key];
+        return $this->data->all();
     }
 
     /**

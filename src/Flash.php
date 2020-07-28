@@ -2,19 +2,16 @@
 
 namespace Neoflow\Session;
 
+use Adbar\Dot;
 use Neoflow\Session\Exception\SessionException;
 
 class Flash implements FlashInterface
 {
     /**
-     * @var array
+     * @var Dot
      */
-    protected $messages = [];
-
-    /**
-     * @var string
-     */
-    protected $key = '_flashMessages';
+    protected $messages;
+    protected $messagesNew;
 
     /**
      * Constructor.
@@ -28,12 +25,16 @@ class Flash implements FlashInterface
             throw new SessionException('Session not started yet.');
         }
 
-        $this->key = $key;
+        $this->messages = new Dot();
+        $this->messagesNew = new Dot();
 
-        if (isset($_SESSION[$this->key])) {
-            $this->messages = $_SESSION[$this->key];
+        if (isset($_SESSION[$key])) {
+            $this->messages->setArray($_SESSION[$key]);
         }
-        $_SESSION[$this->key] = [];
+        $_SESSION[$key] = [];
+
+        $this->messagesNew = new Dot();
+        $this->messagesNew->setReference($_SESSION[$key]);
     }
 
     /**
@@ -45,11 +46,7 @@ class Flash implements FlashInterface
      */
     public function get(string $key, $default = null)
     {
-        if ($this->exists($key)) {
-            return $this->messages[$key];
-        }
-
-        return $default;
+        return $this->messages->get($key, $default);
     }
 
     /**
@@ -60,7 +57,7 @@ class Flash implements FlashInterface
      */
     public function exists(string $key): bool
     {
-        return array_key_exists($key, $this->messages);
+        return $this->messages->has($key);
     }
 
     /**
@@ -70,7 +67,7 @@ class Flash implements FlashInterface
      */
     public function toArray(): array
     {
-        return $this->messages;
+        return $this->messages->all();
     }
 
     /**
@@ -97,7 +94,7 @@ class Flash implements FlashInterface
      */
     public function setNew(string $key, $value): FlashInterface
     {
-        $_SESSION[$this->key][$key] = $value;
+        $this->messagesNew->set($key, $value);
 
         return $this;
     }
@@ -110,7 +107,7 @@ class Flash implements FlashInterface
      */
     public function existsNew(string $key): bool
     {
-        return array_key_exists($key, $_SESSION[$this->key]);
+        return $this->messagesNew->has($key);
     }
 
     /**
@@ -122,11 +119,7 @@ class Flash implements FlashInterface
      */
     public function getNew(string $key, $default = null)
     {
-        if ($this->existsNew($key)) {
-            return $_SESSION[$this->key][$key];
-        }
-
-        return $default;
+        return $this->messagesNew->get($key, $default);
     }
 
     /**
@@ -137,9 +130,7 @@ class Flash implements FlashInterface
      */
     public function deleteNew(string $key): FlashInterface
     {
-        if ($this->existsNew($key)) {
-            unset($_SESSION[$this->key][$key]);
-        }
+        $this->messagesNew->delete($key);
 
         return $this;
     }
@@ -154,9 +145,9 @@ class Flash implements FlashInterface
     public function mergeNew(array $messages, bool $recursive = true): FlashInterface
     {
         if ($recursive) {
-            $_SESSION[$this->key] = array_replace_recursive($_SESSION[$this->key], $messages);
+            $this->messagesNew->mergeRecursiveDistinct($messages);
         } else {
-            $_SESSION[$this->key] = array_replace($_SESSION[$this->key], $messages);
+            $this->messagesNew->merge($messages);
         }
 
         return $this;
@@ -169,7 +160,7 @@ class Flash implements FlashInterface
      */
     public function toArrayNew(): array
     {
-        return $_SESSION[$this->key];
+        return $this->messagesNew->all();
     }
 
     /**
