@@ -2,7 +2,6 @@
 [![Build Status](https://travis-ci.org/Neoflow/Session.svg?branch=master&service=github)](https://travis-ci.org/Neoflow/Session)
 [![Coverage Status](https://coveralls.io/repos/github/Neoflow/Session/badge.svg?branch=master&service=github)](https://coveralls.io/github/Neoflow/Session?branch=master)
 [![Latest Stable Version](https://poser.pugx.org/neoflow/session/v?service=github)](https://packagist.org/packages/neoflow/session)
-[![Latest Unstable Version](https://poser.pugx.org/neoflow/session/v/unstable?service=github)](https://packagist.org/packages/neoflow/session)
 [![Total Downloads](https://poser.pugx.org/neoflow/session/downloads?service=github)](//packagist.org/packages/neoflow/session)
 [![License](https://poser.pugx.org/neoflow/session/license?service=github)](https://packagist.org/packages/neoflow/session)
 
@@ -17,7 +16,6 @@ Session middleware with flash message support for Slim 4 and similar [PSR-15](ht
   - [Helper](#helper)
     - [Initialization](#initialization)
     - [Usage](#usage)
-    - [Dot Notation](#dot-notation)
 - [Contributors](#contributors)
 - [History](#history)
 - [License](#license)
@@ -250,8 +248,7 @@ $result = $session->flash()->apply(function (Neoflow\Session\FlashInterface $fla
 
 **Please note**
 Both helpers have [adbario/php-dot-notation](https://github.com/adbario/php-dot-notation) implemented and support the
- data access with dot notation. Take a look into the readme of the library to learn more about the usage and the dot
-  notation. 
+ data access with dot notation. Take a look into the readme of the library to learn more about the usage.
 
 
 ## Contributors
