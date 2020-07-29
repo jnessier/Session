@@ -247,10 +247,10 @@ $result = $session->flash()->apply(function (Neoflow\Session\FlashInterface $fla
 ```
 
 **Please note**
-Both helpers have [adbario/php-dot-notation](https://github.com/adbario/php-dot-notation) implemented and support the
- data access with dot notation. Take a look into the readme of the library to learn more about the usage.
-
-
+`Neoflow\Session\Flash` and `Neoflow\Session\Session` as helpers have both
+ [adbario/php-dot-notation](https://github.com/adbario/php-dot-notation) implemented and support data access and
+  manipulation with dot notation. Take a look into the readme of the library to learn more about the usage.
+  
 ## Contributors
 * Jonathan Nessier, [Neoflow](https://www.neoflow.ch)
 
