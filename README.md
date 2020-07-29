@@ -9,6 +9,19 @@
 Session middleware with flash message support for Slim 4 and similar [PSR-15](https://www.php-fig.org/psr/psr-15/)
  compliant frameworks and apps.
 
+## Table of Contents
+- [Requirement](#requirement)
+- [Installation](#installation)
+- [Manual](#manual)
+  - [Middleware](#middleware)
+  - [Helper](#helper)
+    - [Initialization](#initialization)
+    - [Usage](#usage)
+    - [Dot Notation](#dot-notation)
+- [Contributors](#contributors)
+- [History](#history)
+- [License](#license)
+
 ## Requirement
 * PHP >= 7.2
 
@@ -125,7 +138,15 @@ $value = $session->get('key', 'default');
 $exists = $session->exists('key');
 
 // Set key and value of session data
-$session = $session->set('key', 'value');
+$overwrite = true;
+$session = $session->set('key', 'value', $overwrite);
+
+// Push session value to the end of an indexed array by key
+$session->set('array', []);
+$session->push('array', 'value1');
+
+// Check whether session value is empty
+$empty = $session->empty('key');
 
 // Delete session value by key
 $deleted = $session->delete('key');
@@ -158,6 +179,9 @@ $result = $session->each(function (string $key, $value) {
 
 Examples how to get read-only access to the flash messages, set in previous request:
 ```php
+// Check whether flash message is empty
+$empty = $session->flash()->empty('key');
+
 // Check whether flash message exists by key
 $exists = $session->flash()->exists('key');
 
@@ -176,7 +200,15 @@ $result = $session->flash()->each(function (string $key, $value) {
 Examples how to manage the new flash messages, set for the next request:
 ```php
 // Set key and value of new flash message
-$flash = $session->flash()->setNew('key', 'value');
+$overwrite = true;
+$flash = $session->flash()->setNew('key', 'value', $overwrite);
+
+// Push new flash message to the end of an indexed array by key
+$session->flash()->setNew('array', []);
+$session->flash()->pushNew('array', 'value1');
+
+// Check whether new flash message is empty
+$empty = $session->flash()->emptyNew('key');
 
 // Check whether new flash message exists by key
 $exists = $session->flash()->existsNew('key');
@@ -216,11 +248,11 @@ $result = $session->flash()->apply(function (Neoflow\Session\FlashInterface $fla
 ]);
 ```
 
-#### Dot notation
-Both helper classes have [adbario/php-dot-notation](https://github.com/adbario/php-dot-notation) implemented and support
- a few data access features with dot notation in a light and fast way.
- 
-Please take a look into the readme of the library to learn more about the usage. 
+**Please note**
+Both helpers have [adbario/php-dot-notation](https://github.com/adbario/php-dot-notation) implemented and support the
+ data access with dot notation. Take a look into the readme of the library to learn more about the usage and the dot
+  notation. 
+
 
 ## Contributors
 * Jonathan Nessier, [Neoflow](https://www.neoflow.ch)
