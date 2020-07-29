@@ -41,53 +41,27 @@ class Session implements SessionInterface
     }
 
     /**
-     * Get flash helper
-     *
-     * @return FlashInterface
+     * {@inheritDoc}
      */
-    public function flash(): FlashInterface
+    public function apply(callable $callback, array $args = [])
     {
-        return $this->flash;
+        array_unshift($args, $this);
+
+        return call_user_func_array($callback, $args);
     }
 
     /**
-     * Get session id
-     *
-     * @return string
+     * {@inheritDoc}
      */
-    public function getId(): string
+    public function delete(string $key): SessionInterface
     {
-        return session_id();
-    }
-
-    /**
-     * Generate new session id
-     *
-     * @param bool $deleteOldSession
-     * @return self
-     */
-    public function generateId(bool $deleteOldSession = false): SessionInterface
-    {
-        session_regenerate_id($deleteOldSession);
+        $this->data->delete($key);
 
         return $this;
     }
 
     /**
-     * Get session status
-     *
-     * @return int
-     */
-    public function getStatus(): int
-    {
-        return session_status();
-    }
-
-    /**
-     * Destroy session
-     *
-     * @return bool
-     * @throws SessionException
+     * {@inheritDoc}
      */
     public function destroy(): bool
     {
@@ -99,33 +73,27 @@ class Session implements SessionInterface
     }
 
     /**
-     * Get session name
-     *
-     * @return string
+     * {@inheritDoc}
      */
-    public function getName(): string
+    public function each(callable $callback)
     {
-        return session_name();
-    }
+        return $this->apply(function (Session $session) use ($callback) {
+            $session = $session->toArray();
 
-
-    /**
-     * Get session value by key, or default value when key doesn't exists
-     *
-     * @param string $key
-     * @param mixed|null $default
-     * @return mixed|null
-     */
-    public function get(string $key, $default = null)
-    {
-        return $this->data->get($key, $default);
+            return array_walk($session, $callback);
+        });
     }
 
     /**
-     * Check whether session value exists by key
-     *
-     * @param string $key
-     * @return bool
+     * {@inheritDoc}
+     */
+    public function empty(string $key): bool
+    {
+        return $this->data->isEmpty($key);
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function exists(string $key): bool
     {
@@ -133,38 +101,57 @@ class Session implements SessionInterface
     }
 
     /**
-     * Set key and value of session data
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return self
+     * {@inheritDoc}
      */
-    public function set(string $key, $value): SessionInterface
+    public function flash(): FlashInterface
     {
-        $this->data->set($key, $value);
+        return $this->flash;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function generateId(bool $deleteOldSession = false): SessionInterface
+    {
+        session_regenerate_id($deleteOldSession);
 
         return $this;
     }
 
     /**
-     * Delete session value by key
-     *
-     * @param string $key
-     * @return self
+     * {@inheritDoc}
      */
-    public function delete(string $key): SessionInterface
+    public function get(string $key, $default = null)
     {
-        $this->data->delete($key);
-
-        return $this;
+        return $this->data->get($key, $default);
     }
 
     /**
-     * Merge multiple keys and values of session data
-     *
-     * @param array $data
-     * @param bool $recursive
-     * @return self
+     * {@inheritDoc}
+     */
+    public function getId(): string
+    {
+        return session_id();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getName(): string
+    {
+        return session_name();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getStatus(): int
+    {
+        return session_status();
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function merge(array $data, bool $recursive = true): SessionInterface
     {
@@ -178,41 +165,38 @@ class Session implements SessionInterface
     }
 
     /**
-     * Get session data as array
-     *
-     * @return array
+     * {@inheritDoc}
+     */
+    public function push(string $key, $value): SessionInterface
+    {
+        if (!is_array($this->get($key))) {
+            throw new SessionException('Key "' . $key . '" does not contain an indexed array to push value.');
+        }
+
+        $this->data->push($key, $value);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function set(string $key, $value, bool $overwrite = true): SessionInterface
+    {
+        if ($overwrite) {
+            $this->data->set($key, $value);
+        } else {
+            $this->data->add($key, $value);
+        }
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function toArray(): array
     {
         return $this->data->all();
-    }
-
-    /**
-     * Apply a callback with arguments to the session data
-     *
-     * @param callable $callback
-     * @param array $args
-     * @return mixed
-     */
-    public function apply(callable $callback, array $args = [])
-    {
-        array_unshift($args, $this);
-
-        return call_user_func_array($callback, $args);
-    }
-
-    /**
-     * Iterate trough the session data
-     *
-     * @param callable $callback
-     * @return mixed
-     */
-    public function each(callable $callback)
-    {
-        return $this->apply(function (Session $session) use ($callback) {
-            $session = $session->toArray();
-
-            return array_walk($session, $callback);
-        });
     }
 }

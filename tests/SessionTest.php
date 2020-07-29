@@ -25,6 +25,15 @@ class SessionTest extends TestCase
 
         $_SESSION['_testSessionData'] = [
             'a' => 'A',
+            'b' => [
+                'b-a' => 'b-A',
+                'b-b' => 'b-B',
+            ],
+            'c' => [
+                'c-A',
+                'c-B',
+            ],
+            'd' => null
         ];
 
         $flash = new Flash();
@@ -34,20 +43,31 @@ class SessionTest extends TestCase
     public function testGet(): void
     {
         $this->assertSame('A', $this->session->get('a'));
-        $this->assertSame('default', $this->session->get('b', 'default'));
+        $this->assertSame('default', $this->session->get('z', 'default'));
     }
 
     public function testExists(): void
     {
         $this->assertTrue($this->session->exists('a'));
-        $this->assertFalse($this->session->exists('b'));
+        $this->assertFalse($this->session->exists('z'));
     }
 
     public function testSet(): void
     {
-        $this->session->set('b', 'B');
+        $this->session->set('e', 'E');
 
-        $this->assertSame('B', $this->session->get('b'));
+        $this->assertSame('E', $this->session->get('e'));
+
+        $this->session->set('f', 'F', false);
+        $this->session->set('f', 'SpecialF', false);
+
+        $this->assertSame('F', $this->session->get('f'));
+    }
+
+    public function testEmpty(): void
+    {
+        $this->assertTrue($this->session->empty('d'));
+        $this->assertFalse($this->session->empty('a'));
     }
 
     public function testDelete(): void
@@ -55,6 +75,17 @@ class SessionTest extends TestCase
         $this->session->delete('a');
 
         $this->assertFalse($this->session->exists('a'));
+    }
+
+    public function testPush(): void
+    {
+        $this->session->push('c', 'c-C');
+
+        $this->assertSame([
+            'c-A',
+            'c-B',
+            'c-C'
+        ], $this->session->get('c'));
     }
 
     public function testGetId(): void
@@ -99,61 +130,69 @@ class SessionTest extends TestCase
     {
         $this->assertSame([
             'a' => 'A',
+            'b' => [
+                'b-a' => 'b-A',
+                'b-b' => 'b-B',
+            ],
+            'c' => [
+                'c-A',
+                'c-B',
+            ],
+            'd' => null
         ], $this->session->toArray());
     }
 
     public function testMergeRecursive(): void
     {
-        $this->session->set('b', [
-            'c' => 'C',
-            'd' => 'D'
-        ]);
-
         $this->session->merge([
             'a' => 'SpecialA',
             'b' => [
-                'd' => 'SpecialD',
-            ]
+                'b-a' => 'Specialb-A',
+                'b-c' => 'Specialb-C'
+            ],
         ]);
 
         $this->assertSame([
             'a' => 'SpecialA',
             'b' => [
-                'c' => 'C',
-                'd' => 'SpecialD'
+                'b-a' => 'Specialb-A',
+                'b-b' => 'b-B',
+                'b-c' => 'Specialb-C',
             ],
+            'c' => [
+                'c-A',
+                'c-B'
+            ],
+            'd' => null
         ], $this->session->toArray());
     }
 
     public function testMerge(): void
     {
-        $this->session->set('b', [
-            'c' => 'C',
-            'd' => 'D'
-        ]);
-
         $this->session->merge([
             'a' => 'SpecialA',
             'b' => [
-                'd' => 'SpecialD',
-            ]
+                'b-a' => 'Specialb-A',
+                'b-c' => []
+            ],
         ], false);
 
         $this->assertSame([
             'a' => 'SpecialA',
             'b' => [
-                'd' => 'SpecialD',
-            ]
+                'b-a' => 'Specialb-A',
+                'b-c' => []
+            ],
+            'c' => [
+                'c-A',
+                'c-B'
+            ],
+            'd' => null
         ], $this->session->toArray());
     }
 
     public function testExportImport(): void
     {
-        $this->session->set('b', [
-            'c' => 'C',
-            'd' => 'D'
-        ]);
-
         $sessionArray = $this->session->toArray();
 
         foreach ($sessionArray as $key => $value) {
@@ -162,16 +201,21 @@ class SessionTest extends TestCase
             }
         }
 
-        $sessionArray['b']['c'] = 'SpecialC';
+        $sessionArray['b']['b-b'] = 'Specialb-B';
 
         $this->session->merge($sessionArray);
 
         $this->assertSame([
             'a' => 'SpecialA',
             'b' => [
-                'c' => 'SpecialC',
-                'd' => 'D'
-            ]
+                'b-a' => 'b-A',
+                'b-b' => 'Specialb-B',
+            ],
+            'c' => [
+                'c-A',
+                'c-B',
+            ],
+            'd' => null
         ], $this->session->toArray());
     }
 

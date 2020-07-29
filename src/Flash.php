@@ -38,43 +38,27 @@ class Flash implements FlashInterface
     }
 
     /**
-     * Check whether flash message exists by key
-     *
-     * @param string $key
-     * @param mixed|null $default
-     * @return mixed|null
+     * {@inheritDoc}
      */
-    public function get(string $key, $default = null)
+    public function apply(callable $callback, array $args = [])
     {
-        return $this->messages->get($key, $default);
+        array_unshift($args, $this);
+
+        return call_user_func_array($callback, $args);
     }
 
     /**
-     * Get flash message by key, or default value when the key doesn't exists
-     *
-     * @param string $key
-     * @return bool
+     * {@inheritDoc}
      */
-    public function exists(string $key): bool
+    public function deleteNew(string $key): FlashInterface
     {
-        return $this->messages->has($key);
+        $this->messagesNew->delete($key);
+
+        return $this;
     }
 
     /**
-     * Get flash messages as array (set in previous request)
-     *
-     * @return array
-     */
-    public function toArray(): array
-    {
-        return $this->messages->all();
-    }
-
-    /**
-     * Iterate trough the flash messages
-     *
-     * @param callable $callback
-     * @return mixed
+     * {@inheritDoc}
      */
     public function each(callable $callback)
     {
@@ -86,24 +70,43 @@ class Flash implements FlashInterface
     }
 
     /**
-     * Set key and value of new flash message.
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return self
+     * {@inheritDoc}
      */
-    public function setNew(string $key, $value): FlashInterface
+    public function eachNew(callable $callback)
     {
-        $this->messagesNew->set($key, $value);
+        return $this->apply(function (Flash $flash) use ($callback) {
+            $flash = $flash->toArrayNew();
 
-        return $this;
+            return array_walk($flash, $callback);
+        });
     }
 
     /**
-     * Check whether new flash message exists by key.
-     *
-     * @param string $key
-     * @return bool
+     * {@inheritDoc}
+     */
+    public function empty(string $key): bool
+    {
+        return $this->messages->isEmpty($key);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function emptyNew(string $key): bool
+    {
+        return $this->messagesNew->isEmpty($key);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function exists(string $key): bool
+    {
+        return $this->messages->has($key);
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function existsNew(string $key): bool
     {
@@ -111,11 +114,15 @@ class Flash implements FlashInterface
     }
 
     /**
-     * Get new flash message by key, or default value when the key doesn't exists.
-     *
-     * @param string $key
-     * @param mixed|null $default
-     * @return mixed|null
+     * {@inheritDoc}
+     */
+    public function get(string $key, $default = null)
+    {
+        return $this->messages->get($key, $default);
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function getNew(string $key, $default = null)
     {
@@ -123,24 +130,7 @@ class Flash implements FlashInterface
     }
 
     /**
-     * Delete new flash message by key.
-     *
-     * @param string $key
-     * @return self
-     */
-    public function deleteNew(string $key): FlashInterface
-    {
-        $this->messagesNew->delete($key);
-
-        return $this;
-    }
-
-    /**
-     * Merge multiple keys and values of flash messages.
-     *
-     * @param array $messages
-     * @param bool $recursive
-     * @return self
+     * {@inheritDoc}
      */
     public function mergeNew(array $messages, bool $recursive = true): FlashInterface
     {
@@ -154,41 +144,47 @@ class Flash implements FlashInterface
     }
 
     /**
-     * Get new flash messages as array.
-     *
-     * @return array
+     * {@inheritDoc}
+     */
+    public function pushNew(string $key, $value): FlashInterface
+    {
+        if (!is_array($this->getNew($key))) {
+            throw new SessionException('Key "' . $key . '" does not contain an indexed array to push value.');
+        }
+
+        $this->messagesNew->push($key, $value);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setNew(string $key, $value, bool $overwrite = true): FlashInterface
+    {
+        if ($overwrite) {
+            $this->messagesNew->set($key, $value);
+        } else {
+            $this->messagesNew->add($key, $value);
+        }
+
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function toArray(): array
+    {
+        return $this->messages->all();
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function toArrayNew(): array
     {
         return $this->messagesNew->all();
-    }
-
-    /**
-     * Iterate trough the new flash messages.
-     *
-     * @param callable $callback
-     * @return mixed
-     */
-    public function eachNew(callable $callback)
-    {
-        return $this->apply(function (Flash $flash) use ($callback) {
-            $flash = $flash->toArrayNew();
-
-            return array_walk($flash, $callback);
-        });
-    }
-
-    /**
-     * Apply a callback with arguments to the flash helper
-     *
-     * @param callable $callback
-     * @param array $args
-     * @return mixed
-     */
-    public function apply(callable $callback, array $args = [])
-    {
-        array_unshift($args, $this);
-
-        return call_user_func_array($callback, $args);
     }
 }

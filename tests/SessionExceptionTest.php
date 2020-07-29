@@ -42,4 +42,27 @@ class SessionExceptionTest extends TestCase
 
         new Session($flash);
     }
+
+    public function testFlashPushNew(): void
+    {
+        $this->expectException(SessionException::class);
+        $this->expectExceptionMessage('Key "a" does not contain an indexed array to push value.');
+
+        session_start();
+        $flash = new Flash();
+
+        $flash->pushNew('a', 'A');
+    }
+
+    public function testSessionPushNew(): void
+    {
+        $this->expectException(SessionException::class);
+        $this->expectExceptionMessage('Key "a" does not contain an indexed array to push value.');
+
+        session_start();
+        $flash = new Flash();
+        $session = new Session($flash);
+
+        $session->push('a', 'A');
+    }
 }
