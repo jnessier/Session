@@ -1,9 +1,3 @@
-**This project is no longer maintained.**
-
-I recommend to use [odan/session](https://packagist.org/packages/odan/session) as session handler in combination with [slim/flash](https://packagist.org/packages/slim/flash) as flash messages service.
-
----------------------------
-
 # Session
 [![Build Status](https://travis-ci.org/Neoflow/Session.svg?branch=master&service=github)](https://travis-ci.org/Neoflow/Session)
 [![Coverage Status](https://coveralls.io/repos/github/Neoflow/Session/badge.svg?branch=master&service=github)](https://coveralls.io/github/Neoflow/Session?branch=master)
@@ -11,8 +5,7 @@ I recommend to use [odan/session](https://packagist.org/packages/odan/session) a
 [![Total Downloads](https://poser.pugx.org/neoflow/session/downloads?service=github)](//packagist.org/packages/neoflow/session)
 [![License](https://poser.pugx.org/neoflow/session/license?service=github)](https://packagist.org/packages/neoflow/session)
 
-Session middleware with flash message support for Slim 4 and similar [PSR-15](https://www.php-fig.org/psr/psr-15/)
- compliant frameworks and apps.
+Session service for Slim 4 and similar [PSR-15](https://www.php-fig.org/psr/psr-15/) compliant frameworks and apps.
 
 ## Table of Contents
 - [Requirement](#requirement)
@@ -42,6 +35,13 @@ Or manually add this line to the `require` block in your `composer.json`:
 "neoflow/session": "^1.0.0"
 ```
 
+## Configuration
+tbd
+
+## Usage
+tbd
+
+
 ## Manual
 The following instructions based on Slim 4, but should be adaptable for any PSR-15 compliant frameworks and apps.
 
@@ -61,9 +61,6 @@ The following options are supported:
 | ```name``` | string | Name of the session cookie. | SID |
 | ```lifetime``` | int | Session lifetime in seconds. | 3600 |
 | ```autoRefresh``` | bool | Refresh of session lifetime after each request. | true |
-| ```withAttribute``` | bool | Helper class as request attribute. | false |
-| ```sessionKey``` | string | Key for session data. | _sessionData |
-| ```flashKey``` | string | Key for flash messages.  | _flashMessages |
 
 ### Helper
 Use `Neoflow\Session\Session` and `Neoflow\Session\Flash` as helper, to get extended functionality for the session

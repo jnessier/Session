@@ -36,8 +36,7 @@ class SessionTest extends TestCase
             'd' => null
         ];
 
-        $flash = new Flash();
-        $this->session = new Session($flash, '_testSessionData');
+        $this->session = new Session();
     }
 
     public function testGet(): void
