@@ -69,7 +69,7 @@ class Session implements SessionInterface
      *
      * @throws SessionException
      */
-    public function generateId(bool $delete = false): SessionInterface
+    public function generateId(bool $delete = false): string
     {
         if (!$this->isStarted()) {
             throw new SessionException('Generate session id failed. Session not started yet.');
@@ -77,7 +77,7 @@ class Session implements SessionInterface
 
         session_regenerate_id($delete);
 
-        return $this;
+        return $this->getId();
     }
 
     /**
@@ -177,7 +177,7 @@ class Session implements SessionInterface
     /**
      * {@inheritDoc}
      */
-    public function merge(array $data, bool $recursive = true): void
+    public function mergeData(array $data, bool $recursive = true): void
     {
         if ($recursive) {
             $this->data = array_replace_recursive($this->data, $data);

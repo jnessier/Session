@@ -30,9 +30,18 @@ interface SessionInterface
      *
      * @param bool $delete Set TRUE to delete old session
      *
-     * @return self
+     * @return string
      */
-    public function generateId(bool $delete = false): self;
+    public function generateId(bool $delete = false): string;
+
+    /**
+     * Get session cookie.
+     *
+     * @link https://www.php.net/manual/en/function.session-get-cookie-params.php
+     *
+     * @return array
+     */
+    public function getCookie(): array;
 
     /**
      * Get session data.
@@ -40,22 +49,6 @@ interface SessionInterface
      * @return array
      */
     public function getData(): array;
-
-    /**
-     * Check whether session value exists by key.
-     *
-     * @param string $key Key as identifier
-     *
-     * @return bool
-     */
-    public function hasValue(string $key): bool;
-
-    /**
-     * Set session data. Already set data will be overwritten.
-     *
-     * @param array $data Session data
-     */
-    public function setData(array $data): void;
 
     /**
      * Get session id.
@@ -95,6 +88,15 @@ interface SessionInterface
     public function getValue(string $key, $default = null);
 
     /**
+     * Check whether session value exists by key.
+     *
+     * @param string $key Key as identifier
+     *
+     * @return bool
+     */
+    public function hasValue(string $key): bool;
+
+    /**
      * Check whether session is started.
      *
      * @return bool
@@ -102,15 +104,15 @@ interface SessionInterface
     public function isStarted(): bool;
 
     /**
-     * Merge data into session data
+     * Merge data into session data.
      *
      * @param array $data Data
      * @param bool $recursive Set FALSE to disable recursive merge
      */
-    public function merge(array $data, bool $recursive = true): void;
+    public function mergeData(array $data, bool $recursive = true): void;
 
     /**
-     * Set session cookie
+     * Set session cookie.
      *
      * @link https://www.php.net/manual/en/function.session-set-cookie-params.php
      *
@@ -119,13 +121,11 @@ interface SessionInterface
     public function setCookie(array $options): void;
 
     /**
-     * Get session cookie.
+     * Set session data. Already set data will be overwritten.
      *
-     * @link https://www.php.net/manual/en/function.session-get-cookie-params.php
-     *
-     * @return array
+     * @param array $data Session data
      */
-    public function getCookie(): array;
+    public function setData(array $data): void;
 
     /**
      * Set session name.

@@ -174,9 +174,9 @@ class SessionTest extends TestCase
         $this->assertSame($_SESSION, $this->session->getData());
     }
 
-    public function testMergeRecursive(): void
+    public function testMergeDataRecursive(): void
     {
-        $this->session->merge([
+        $this->session->mergeData([
             'a' => 'SpecialA',
             'b' => [
                 'b-a' => 'Specialb-A',
@@ -199,9 +199,9 @@ class SessionTest extends TestCase
         ], $this->session->getData());
     }
 
-    public function testMerge(): void
+    public function testMergeData(): void
     {
-        $this->session->merge([
+        $this->session->mergeData([
             'a' => 'SpecialA',
             'b' => [
                 'b-a' => 'Specialb-A',
