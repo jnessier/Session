@@ -1,9 +1,3 @@
-**This project is no longer maintained.**
-
-I recommend to use [odan/session](https://packagist.org/packages/odan/session) as session handler in combination with [slim/flash](https://packagist.org/packages/slim/flash) as flash messages service.
-
----------------------------
-
 # Session
 [![Build Status](https://travis-ci.org/Neoflow/Session.svg?branch=master&service=github)](https://travis-ci.org/Neoflow/Session)
 [![Coverage Status](https://coveralls.io/repos/github/Neoflow/Session/badge.svg?branch=master&service=github)](https://coveralls.io/github/Neoflow/Session?branch=master)
