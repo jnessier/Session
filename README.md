@@ -71,12 +71,12 @@ The service `Neoflow\Session\Session` supports the following options:
 |---|---|---|---|
 | `name` | string | Name of the session cookie. | `"sid"` |
 | `autoRefresh` | bool | Refresh of session lifetime after each request. | `true` |
-| `cookie['lifetime']` | array | Lifetime of the session cookie in seconds | `3600` |
-| `cookie['path']` | array | Path to set in the session cookie | `"/"` |
-| `cookie['domain']` | array | Domain to set in the session cookie | `null` |
-| `cookie['secure']` | array | Set `true` to sent session cookie only  over secure connections | `false` |
-| `cookie['httponly']` | array | Set `false` to make session cookie accessible for scripting languages | `true` |
-| `cookie['samesite']` | array | Set `"Strict"` to prevent the session cookie be sent along with cross-site requests | `"Lax"` |
+| `cookie['lifetime']` | int | Lifetime in seconds of the session cookie in seconds | `3600` |
+| `cookie['path']` | string | Path to set in the session cookie | `"/"` |
+| `cookie['domain']` | string|null | Domain to set in the session cookie | `null` |
+| `cookie['secure']` | bool | Set `true` to sent session cookie only  over secure connections | `false` |
+| `cookie['httponly']` | bool | Set `false` to make session cookie accessible for scripting languages | `true` |
+| `cookie['samesite']` | string | Set `"Strict"` to prevent the session cookie be sent along with cross-site requests | `"Lax"` |
 | `iniSettings[]` | array | [PHP session settings](https://www.php.net/manual/en/session.configuration.php), beginning with with `session. | [] |
 
 When your DI container supports inflectors (e.g. [league/container](https://container.thephpleague.com/3.x/inflectors/)),
