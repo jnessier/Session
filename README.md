@@ -73,7 +73,7 @@ The service `Neoflow\Session\Session` supports the following options:
 | `autoRefresh` | bool | Refresh of session lifetime after each request. | `true` |
 | `cookie['lifetime']` | int | Lifetime in seconds of the session cookie in seconds | `3600` |
 | `cookie['path']` | string | Path to set in the session cookie | `"/"` |
-| `cookie['domain']` | string|null | Domain to set in the session cookie | `null` |
+| `cookie['domain']` | string/null | Domain to set in the session cookie | `null` |
 | `cookie['secure']` | bool | Set `true` to sent session cookie only  over secure connections | `false` |
 | `cookie['httponly']` | bool | Set `false` to make session cookie accessible for scripting languages | `true` |
 | `cookie['samesite']` | string | Set `"Strict"` to prevent the session cookie be sent along with cross-site requests | `"Lax"` |
