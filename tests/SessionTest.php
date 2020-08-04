@@ -3,6 +3,7 @@
 namespace Neoflow\Session\Test;
 
 use Middlewares\Utils\Dispatcher;
+use Neoflow\Session\Exception\SessionException;
 use Neoflow\Session\Flash;
 use Neoflow\Session\Middleware\SessionMiddleware;
 use Neoflow\Session\Session;
@@ -19,11 +20,17 @@ class SessionTest extends TestCase
 
     protected function setUp(): void
     {
-        Dispatcher::run([
-            new SessionMiddleware(),
+        $this->session = new Session([
+            'iniSettings' => [
+                'gc_maxlifetime' => 1440
+            ]
         ]);
 
-        $_SESSION['_testSessionData'] = [
+        Dispatcher::run([
+            new SessionMiddleware($this->session),
+        ]);
+
+        $_SESSION = [
             'a' => 'A',
             'b' => [
                 'b-a' => 'b-A',
@@ -35,56 +42,32 @@ class SessionTest extends TestCase
             ],
             'd' => null
         ];
-
-        $this->session = new Session();
     }
 
-    public function testGet(): void
+    public function testGetValue(): void
     {
-        $this->assertSame('A', $this->session->get('a'));
-        $this->assertSame('default', $this->session->get('z', 'default'));
+        $this->assertSame('A', $this->session->getValue('a'));
+        $this->assertSame('default', $this->session->getValue('z', 'default'));
     }
 
-    public function testExists(): void
+    public function testHasValue(): void
     {
-        $this->assertTrue($this->session->exists('a'));
-        $this->assertFalse($this->session->exists('z'));
+        $this->assertTrue($this->session->hasValue('a'));
+        $this->assertFalse($this->session->hasValue('z'));
     }
 
-    public function testSet(): void
+    public function testSetValue(): void
     {
-        $this->session->set('e', 'E');
+        $this->session->setValue('e', 'E');
 
-        $this->assertSame('E', $this->session->get('e'));
-
-        $this->session->set('f', 'F', false);
-        $this->session->set('f', 'SpecialF', false);
-
-        $this->assertSame('F', $this->session->get('f'));
+        $this->assertSame('E', $this->session->getValue('e'));
     }
 
-    public function testEmpty(): void
+    public function testDeleteValue(): void
     {
-        $this->assertTrue($this->session->empty('d'));
-        $this->assertFalse($this->session->empty('a'));
-    }
+        $this->session->deleteValue('a');
 
-    public function testDelete(): void
-    {
-        $this->session->delete('a');
-
-        $this->assertFalse($this->session->exists('a'));
-    }
-
-    public function testPush(): void
-    {
-        $this->session->push('c', 'c-C');
-
-        $this->assertSame([
-            'c-A',
-            'c-B',
-            'c-C'
-        ], $this->session->get('c'));
+        $this->assertFalse($this->session->hasValue('a'));
     }
 
     public function testGetId(): void
@@ -110,7 +93,7 @@ class SessionTest extends TestCase
     {
         $this->session->destroy();
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(SessionException::class);
 
         $this->session->destroy();
     }
@@ -120,25 +103,75 @@ class SessionTest extends TestCase
         $this->assertSame(PHP_SESSION_ACTIVE, $this->session->getStatus());
     }
 
+    public function testGetNameInvalid(): void
+    {
+        $this->session->destroy();
+
+        $this->expectException(SessionException::class);
+        $this->expectExceptionMessage('Session name does not exists. Session not started yet.');
+
+        $this->session->getName();
+    }
+
+    public function testStartInvalid(): void
+    {
+        $this->expectException(SessionException::class);
+        $this->expectExceptionMessage('Session start failed. Session already started.');
+
+        $this->session->start();
+    }
+
+    public function testSetNameInvalid(): void
+    {
+        $this->expectException(SessionException::class);
+        $this->expectExceptionMessage('Set session name failed. Session already started.');
+
+        $this->session->setName('foo bar');
+    }
+
+    public function testGenerateIdInvalid(): void
+    {
+        $this->session->destroy();
+
+        $this->expectException(SessionException::class);
+        $this->expectExceptionMessage('Generate session id failed. Session not started yet.');
+
+        $this->session->generateId();
+    }
+
+    public function testGetDataInvalid(): void
+    {
+        $this->session->destroy();
+
+        $this->expectException(SessionException::class);
+        $this->expectExceptionMessage('Session data does not exists. Session not started yet.');
+
+        $this->session->getData();
+    }
+
+    public function testGetIdInvalid(): void
+    {
+        $this->session->destroy();
+
+        $this->expectException(SessionException::class);
+        $this->expectExceptionMessage('Session id does not exists. Session not started yet.');
+
+        $this->session->getId();
+    }
+
+    public function testGetCookie(): void
+    {
+        $this->assertIsArray($this->session->getCookie());
+    }
+
     public function testGetName(): void
     {
-        $this->assertSame('SID', $this->session->getName());
+        $this->assertSame('sid', $this->session->getName());
     }
 
     public function testToArray(): void
     {
-        $this->assertSame([
-            'a' => 'A',
-            'b' => [
-                'b-a' => 'b-A',
-                'b-b' => 'b-B',
-            ],
-            'c' => [
-                'c-A',
-                'c-B',
-            ],
-            'd' => null
-        ], $this->session->toArray());
+        $this->assertSame($_SESSION, $this->session->getData());
     }
 
     public function testMergeRecursive(): void
@@ -163,7 +196,7 @@ class SessionTest extends TestCase
                 'c-B'
             ],
             'd' => null
-        ], $this->session->toArray());
+        ], $this->session->getData());
     }
 
     public function testMerge(): void
@@ -187,58 +220,18 @@ class SessionTest extends TestCase
                 'c-B'
             ],
             'd' => null
-        ], $this->session->toArray());
+        ], $this->session->getData());
     }
 
-    public function testExportImport(): void
+    public function testSetData(): void
     {
-        $sessionArray = $this->session->toArray();
-
-        foreach ($sessionArray as $key => $value) {
-            if ($key === 'a') {
-                $sessionArray['a'] = 'SpecialA';
-            }
-        }
-
-        $sessionArray['b']['b-b'] = 'Specialb-B';
-
-        $this->session->merge($sessionArray);
-
-        $this->assertSame([
-            'a' => 'SpecialA',
-            'b' => [
-                'b-a' => 'b-A',
-                'b-b' => 'Specialb-B',
-            ],
-            'c' => [
-                'c-A',
-                'c-B',
-            ],
-            'd' => null
-        ], $this->session->toArray());
-    }
-
-    public function testApply(): void
-    {
-        $result = $this->session->apply(function (Session $session, string $value) {
-            return $session->get('a') . $value;
-        }, [
-            'B',
+        $this->session->setData([
+            'foo' => 'bar'
         ]);
 
-        $this->assertSame('AB', $result);
+        $this->assertSame([
+            'foo' => 'bar'
+        ], $this->session->getData());
     }
 
-    public function testEach(): void
-    {
-        $this->session->each(function ($value, $key) {
-            $this->assertArrayHasKey($key, $this->session->toArray());
-            $this->assertContains($value, $this->session->toArray());
-        });
-    }
-
-    public function testFlash(): void
-    {
-        $this->assertInstanceOf(Flash::class, $this->session->flash());
-    }
 }

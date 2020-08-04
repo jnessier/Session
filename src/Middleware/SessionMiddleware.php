@@ -38,7 +38,9 @@ final class SessionMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-
+        if (!$this->session->isStarted()) {
+            $this->session->start();
+        }
 
         return $handler->handle($request);
     }

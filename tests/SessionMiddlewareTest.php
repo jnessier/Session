@@ -13,25 +13,16 @@ class SessionMiddlewareTest extends TestCase
 {
     public function testSessionMiddlware(): void
     {
+        $session = new Session();
+
         Dispatcher::run([
-            new SessionMiddleware(),
+            new SessionMiddleware($session),
         ]);
 
-        $this->assertIsArray($_SESSION);
-        $this->assertIsString(session_id());
-    }
+        $_SESSION['a'] = 'A';
+        $session->setValue('b', 'B');
 
-    public function testSessionMiddlewareWithAttribute(): void
-    {
-        Dispatcher::run([
-            new SessionMiddleware([
-                'withAttribute' => true,
-            ]),
-            function (ServerRequestInterface $request, RequestHandlerInterface $handler) {
-                $this->assertInstanceOf(Session::class, $request->getAttribute('session'));
-
-                $handler->handle($request);
-            },
-        ]);
+        $this->assertTrue($session->isStarted());
+        $this->assertSame($_SESSION, $session->getData());
     }
 }
