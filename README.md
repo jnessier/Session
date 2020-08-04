@@ -10,17 +10,14 @@ Session service for Slim 4 and similar [PSR-15](https://www.php-fig.org/psr/psr-
 ## Table of Contents
 - [Requirement](#requirement)
 - [Installation](#installation)
-- [Manual](#manual)
-  - [Middleware](#middleware)
-  - [Helper](#helper)
-    - [Initialization](#initialization)
-    - [Usage](#usage)
+- [Configuration](#configuration)
+- [Usage](#usage)
 - [Contributors](#contributors)
 - [History](#history)
 - [License](#license)
 
 ## Requirement
-* PHP >= 7.2
+* PHP >= 7.3
 
 ## Installation
 You have 2 options to install this library.
@@ -32,85 +29,65 @@ composer require neoflow/session
 
 Or manually add this line to the `require` block in your `composer.json`:
 ```json
-"neoflow/session": "^1.0.0"
+"neoflow/session": "^2.0.0"
 ```
 
 ## Configuration
-tbd
+The following instructions based on [Slim 4](http://www.slimframework.com), in combination with
+ [PHP-DI](https://php-di.org), but should be adaptable for any PSR-11/PSR-15 compliant frameworks and libraries.
+
+Add the service `Neoflow\Session\Session` and middleware `Neoflow\Session\Middleware\SessionMiddleware`
+ to the container definitions...
+```php
+use Neoflow\Session\Session;
+use Neoflow\Session\SessionInterface;
+use Neoflow\Session\Middleware\SessionMiddleware;
+use Psr\Container\ContainerInterface;
+
+return [
+    // ...
+    SessionInterface::class => function () {
+        return new Session([
+            // Your custom session options
+        ]);
+    },
+    SessionMiddleware::class => function (ContainerInterface $container) {
+        $session = $container->get(SessionInterface::class);
+        return new SessionMiddleware($session);
+    },
+    // ...
+];
+```
+...and register the middleware, to autostart the session when it got dispatched. 
+```php
+use Neoflow\Session\Middleware\SessionMiddleware;
+
+$app->add(SessionMiddleware::class);
+```
+
+The service `Neoflow\Session\Session` supports the following options:
+
+| Key | Type | Description | Default |
+|---|---|---|---|
+| `name` | string | Name of the session cookie. | `"sid"` |
+| `autoRefresh` | bool | Refresh of session lifetime after each request. | `true` |
+| `cookie['lifetime']` | array | Lifetime of the session cookie in seconds | `3600` |
+| `cookie['path']` | array | Path to set in the session cookie | `"/"` |
+| `cookie['domain']` | array | Domain to set in the session cookie | `null` |
+| `cookie['secure']` | array | Set `true` to sent session cookie only  over secure connections | `false` |
+| `cookie['httponly']` | array | Set `false` to make session cookie accessible for scripting languages | `true` |
+| `cookie['samesite']` | array | Set `"Strict"` to prevent the session cookie be sent along with cross-site requests | `"Lax"` |
+| `iniSettings[]` | array | [PHP session settings](https://www.php.net/manual/en/session.configuration.php), beginning with with `session. | [] |
+
+When your DI container supports inflectors (e.g. [league/container](https://container.thephpleague.com/3.x/inflectors/)),
+ you can optionally register `Neoflow/Session/SessionAwareInterface` as inflector to your container definition.
+
+Additionally, you can also use `Neoflow/Session/SessionAwareTrait` as a shorthand implementation of
+ `Neoflow/Session/SessionAwareInterface`.
 
 ## Usage
 tbd
 
-
-## Manual
-The following instructions based on Slim 4, but should be adaptable for any PSR-15 compliant frameworks and apps.
-
-### Middleware
-Add the `Neoflow\Session\Middleware\SessionMiddleware` to the middleware dispatcher. 
-The middleware handles your session configuration and starts the session, after each request. 
-
-```php
-$app->add(new Neoflow\Session\Middleware\SessionMiddleware([
-    // your custom session options
-]));
-```
-The following options are supported:
-
-| Key | Type | Description | Default |
-|---|---|---|---|
-| ```name``` | string | Name of the session cookie. | SID |
-| ```lifetime``` | int | Session lifetime in seconds. | 3600 |
-| ```autoRefresh``` | bool | Refresh of session lifetime after each request. | true |
-
-### Helper
-Use `Neoflow\Session\Session` and `Neoflow\Session\Flash` as helper, to get extended functionality for the session
- handling, and the ability to manage and get access to session data and flash messages.
-  
-#### Initialization
-You have 2 options to set up and initialize the helper. 
-
-Inject `Neoflow\Session\Flash`, add the `Neoflow\Session\Session` to the container...
-```php
-$container = new DI\Container();
-$container
-    ->set('session', function () use ($container) {
-        $flash = new Neoflow\Session\Flash();
-        return new Neoflow\Session\Session($flash);
-    });
-```
-...and use the helper as dependency:
-```php
-$app->get('/', function (Request $request, Response $response) {
-    $session = $this->get('session');
-
-    // Your custom code
-
-    return $response;
-});
-```
-Or enable the option `withAttribute` for the `Neoflow\Session\Middleware\SessionMiddleware`...
-```php
-$app->add(new Neoflow\Session\Middleware\SessionMiddleware([
-    'withAttribute' => true
-]));
-```
-...and get the helper as request attribute:
-```php
-$app->get('/', function (Psr\Http\Message\RequestInterface $request, Psr\Http\Message\ResponseInterface $response) {
-    $session = $request->getAttribute('session');
-
-    // Your custom code
-
-    return $response;
-});
-```
-
-**Important:** 
-Don't use both initialization options simultaneously. 
-It's important to set up the helper only once. 
-Otherwise, it can cause data conflicts with the flash messages.
- 
-#### Usage
 Examples how to handle the session:
 ```php
 // Get session id
@@ -178,82 +155,6 @@ $result = $session->each(function (string $key, $value) {
 });
 ```
 
-Examples how to get read-only access to the flash messages, set in previous request:
-```php
-// Check whether flash message is empty
-$empty = $session->flash()->empty('key');
-
-// Check whether flash message exists by key
-$exists = $session->flash()->exists('key');
-
-// Get flash message by key, or default value when the key doesn't exists 
-$value = $session->flash()->get('key', 'default');
-
-// Get flash messages as array
-$array = $session->flash()->toArray();
-
-// Iterate trough the flash messages
-$result = $session->flash()->each(function (string $key, $value) {
-    // Your custom code
-});
-```
-
-Examples how to manage the new flash messages, set for the next request:
-```php
-// Set key and value of new flash message
-$overwrite = true;
-$flash = $session->flash()->setNew('key', 'value', $overwrite);
-
-// Push new flash message to the end of an indexed array by key
-$session->flash()->setNew('array', []);
-$session->flash()->pushNew('array', 'value1');
-
-// Check whether new flash message is empty
-$empty = $session->flash()->emptyNew('key');
-
-// Check whether new flash message exists by key
-$exists = $session->flash()->existsNew('key');
-
-// Get new flash message by key, or default value when the key doesn't exists
-$value = $session->flash()->getNew('key', 'default');
-
-// Delete new flash message by key
-$deleted = $session->flash()->deleteNew('key');
-
-// Merge recursively multiple keys and values of new flash messages
-$recursive = true;
-$flash = $session->flash()->mergeNew([
-    'key' => 'value',
-    'key2' => [
-       'key3' => 'value3'     
-    ]
-], $recursive);
-
-// Get new flash messages as array
-$array = $session->flash()->toArrayNew();
-
-// Iterate trough the new flash messages
-$result = $session->flash()->eachNew(function (string $key, $value) {
-    // Your custom code
-});
-```
-
-Examples how to manage both types of flash messages:
-```php
-// Apply a callback with arguments to the flash helper
-$result = $session->flash()->apply(function (Neoflow\Session\FlashInterface $flash, string $arg, string $arg2) {
-   // Your custom code
-}, [
-   'arg',
-   'arg2'
-]);
-```
-
-**Please note**
-`Neoflow\Session\Flash` and `Neoflow\Session\Session` as helpers have both
- [adbario/php-dot-notation](https://github.com/adbario/php-dot-notation) implemented and support data access and
-  manipulation with dot notation. Take a look into the readme of the library to learn more about the usage.
-  
 ## Contributors
 * Jonathan Nessier, [Neoflow](https://www.neoflow.ch)
 
