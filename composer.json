@@ -25,12 +25,11 @@
     "run phpunit": "phpunit --configuration phpunit.xml.dist"
   },
   "require": {
-    "psr/http-message": "^1.0",
     "psr/http-server-middleware": "^1.0",
-    "php": "^7.2",
-    "adbario/php-dot-notation": "^2.2"
+    "php": "^7.3"
   },
   "require-dev": {
+    "psr/http-message": "^1.0",
     "friendsofphp/php-cs-fixer": "^2.16",
     "slim/psr7": "^1.1",
     "phpunit/phpunit": "^9.2",
