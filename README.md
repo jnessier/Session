@@ -48,7 +48,7 @@ return [
     // ...
     SessionInterface::class => function () {
         return new Session([
-            // Your custom session options
+            // Session options
         ]);
     },
     SessionMiddleware::class => function (ContainerInterface $container) {
@@ -86,28 +86,52 @@ Additionally, you can also use `Neoflow/Session/SessionAwareTrait` as a shorthan
  `Neoflow/Session/SessionAwareInterface`.
 
 ## Usage
-tbd
-
 Examples how to handle the session:
 ```php
-// Get session id
-$id = $session->getId();
-
-// Generate new session id
-$deleteOldSession = false;
-$session = $session->generateId($deleteOldSession); 
-
-// Get session status
-$status = $session->getStatus();
-
-// Destroy session
+// Destroy session.
 $destroyed = $session->destroy();
 
-// Get session name
+// Generate new session id.
+$id = $session->generateId();
+
+// Get session cookie.
+$cookie = $session->getCookie();
+
+// Get session id.
+$id = $session->getId();
+
+// Get session name.
 $name = $session->getName();
+
+// Get session status.
+$status = $session->getStatus();
+
+// Check whether session is started.
+$isStarted = $session->isStarted();
+
+// Set session cookie.
+$options = [ // Cookie options
+    'lifetime' => 3600,
+    'path' => '/',
+    'domain' => null,
+    'secure' => false,
+    'httponly' => true,
+    'samesite' => 'Lax'
+];
+$session->setCookie($options);
+
+// Set session name.
+$name = 'sid' // Session name
+$session->setName($name);
+
+// Start session.
+$started = $session->start();
 ```
 
 Examples how to manage the session data:
+
+T B D
+
 ```php
 // Get session value by key, or default value when key doesn't exists 
 $value = $session->get('key', 'default');
