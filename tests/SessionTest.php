@@ -139,15 +139,6 @@ class SessionTest extends TestCase
         $this->session->generateId();
     }
 
-    public function testGetDataInvalid(): void
-    {
-        $this->session->destroy();
-
-        $this->expectException(SessionException::class);
-        $this->expectExceptionMessage('Session data does not exists. Session not started yet.');
-
-        $this->session->getData();
-    }
 
     public function testGetIdInvalid(): void
     {
@@ -169,14 +160,14 @@ class SessionTest extends TestCase
         $this->assertSame('sid', $this->session->getName());
     }
 
-    public function testToArray(): void
+    public function testGetValues(): void
     {
-        $this->assertSame($_SESSION, $this->session->getData());
+        $this->assertSame($_SESSION, $this->session->getValues());
     }
 
-    public function testMergeDataRecursive(): void
+    public function testMergeValuesRecursive(): void
     {
-        $this->session->mergeData([
+        $this->session->mergeValues([
             'a' => 'SpecialA',
             'b' => [
                 'b-a' => 'Specialb-A',
@@ -196,12 +187,12 @@ class SessionTest extends TestCase
                 'c-B'
             ],
             'd' => null
-        ], $this->session->getData());
+        ], $this->session->getValues());
     }
 
-    public function testMergeData(): void
+    public function testMergeValues(): void
     {
-        $this->session->mergeData([
+        $this->session->mergeValues([
             'a' => 'SpecialA',
             'b' => [
                 'b-a' => 'Specialb-A',
@@ -220,18 +211,15 @@ class SessionTest extends TestCase
                 'c-B'
             ],
             'd' => null
-        ], $this->session->getData());
+        ], $this->session->getValues());
     }
 
-    public function testSetData(): void
+    public function testSetValues(): void
     {
-        $this->session->setData([
+        $this->session->setValues([
             'foo' => 'bar'
         ]);
 
-        $this->assertSame([
-            'foo' => 'bar'
-        ], $this->session->getData());
+        $this->assertSame($_SESSION, $this->session->getValues());
     }
-
 }

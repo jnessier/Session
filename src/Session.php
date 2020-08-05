@@ -2,16 +2,11 @@
 
 namespace Neoflow\Session;
 
-use Adbar\Dot;
+use Neoflow\Data\AbstractData;
 use Neoflow\Session\Exception\SessionException;
 
-class Session implements SessionInterface
+class Session extends AbstractData implements SessionInterface
 {
-    /**
-     * @var array
-     */
-    protected $data;
-
     /**
      * @var array
      */
@@ -40,15 +35,6 @@ class Session implements SessionInterface
         $this->options = array_replace_recursive($this->options, $options);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function deleteValue(string $key): void
-    {
-        if ($this->hasValue($key)) {
-            unset($this->data[$key]);
-        }
-    }
 
     /**
      * {@inheritDoc}
@@ -88,27 +74,6 @@ class Session implements SessionInterface
         return session_get_cookie_params();
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @throws SessionException
-     */
-    public function getData(): array
-    {
-        if (!$this->isStarted()) {
-            throw new SessionException('Session data does not exists. Session not started yet.');
-        }
-
-        return $this->data;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setData(array $data): void
-    {
-        $this->data = $data;
-    }
 
     /**
      * {@inheritDoc}
@@ -149,42 +114,11 @@ class Session implements SessionInterface
     /**
      * {@inheritDoc}
      */
-    public function getValue(string $key, $default = null)
-    {
-        if ($this->hasValue($key)) {
-            return $this->data[$key];
-        }
-
-        return $default;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function hasValue(string $key): bool
-    {
-        return isset($this->data[$key]);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function isStarted(): bool
     {
         return PHP_SESSION_ACTIVE === $this->getStatus();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function mergeData(array $data, bool $recursive = true): void
-    {
-        if ($recursive) {
-            $this->data = array_replace_recursive($this->data, $data);
-        } else {
-            $this->data = array_replace($this->data, $data);
-        }
-    }
 
     /**
      * {@inheritDoc}
@@ -208,13 +142,6 @@ class Session implements SessionInterface
         session_name($name);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function setValue(string $key, $value): void
-    {
-        $this->data[$key] = $value;
-    }
 
     /**
      * {@inheritDoc}
@@ -247,7 +174,7 @@ class Session implements SessionInterface
         $result = session_start();
 
         if ($result) {
-            $this->data = &$_SESSION;
+            $this->values = &$_SESSION;
         }
 
         return $result;

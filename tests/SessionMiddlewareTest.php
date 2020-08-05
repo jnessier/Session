@@ -23,6 +23,6 @@ class SessionMiddlewareTest extends TestCase
         $session->setValue('b', 'B');
 
         $this->assertTrue($session->isStarted());
-        $this->assertSame($_SESSION, $session->getData());
+        $this->assertSame($_SESSION, $session->getValues());
     }
 }

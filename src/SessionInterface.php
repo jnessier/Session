@@ -2,17 +2,11 @@
 
 namespace Neoflow\Session;
 
-use Adbar\Dot;
+use Neoflow\Data\DataInterface;
 
 interface SessionInterface
 {
 
-    /**
-     * Delete session value by key.
-     *
-     * @param string $key Key as identifier of the value
-     */
-    public function deleteValue(string $key): void;
 
     /**
      * Destroy session.
@@ -43,12 +37,6 @@ interface SessionInterface
      */
     public function getCookie(): array;
 
-    /**
-     * Get session data.
-     *
-     * @return array
-     */
-    public function getData(): array;
 
     /**
      * Get session id.
@@ -77,24 +65,6 @@ interface SessionInterface
      */
     public function getStatus(): int;
 
-    /**
-     * Get session value by key.
-     *
-     * @param string $key Key as identifier
-     * @param mixed $default Default value when key doesn't exists
-     *
-     * @return mixed
-     */
-    public function getValue(string $key, $default = null);
-
-    /**
-     * Check whether session value exists by key.
-     *
-     * @param string $key Key as identifier
-     *
-     * @return bool
-     */
-    public function hasValue(string $key): bool;
 
     /**
      * Check whether session is started.
@@ -103,13 +73,6 @@ interface SessionInterface
      */
     public function isStarted(): bool;
 
-    /**
-     * Merge data into session data.
-     *
-     * @param array $data Data
-     * @param bool $recursive Set FALSE to disable recursive merge
-     */
-    public function mergeData(array $data, bool $recursive = true): void;
 
     /**
      * Set session cookie.
@@ -121,26 +84,12 @@ interface SessionInterface
     public function setCookie(array $options): void;
 
     /**
-     * Set session data. Already set data will be overwritten.
-     *
-     * @param array $data Session data
-     */
-    public function setData(array $data): void;
-
-    /**
      * Set session name.
      *
      * @param string $name Session name
      */
     public function setName(string $name): void;
 
-    /**
-     * Set session value by key.
-     *
-     * @param string $key Key as identifier
-     * @param mixed $value Session value
-     */
-    public function setValue(string $key, $value): void;
 
     /**
      * Start session.
