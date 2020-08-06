@@ -27,7 +27,7 @@
   "require": {
     "psr/http-server-middleware": "^1.0",
     "php": "^7.3",
-    "neoflow/data": "^0.0.1"
+    "neoflow/data": "^0.2"
   },
   "require-dev": {
     "psr/http-message": "^1.0",

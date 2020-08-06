@@ -10,10 +10,7 @@ trait SessionAwareTrait
     protected $session;
 
     /**
-     * Set session
-     *
-     * @param SessionInterface $session
-     * @return void
+     * {@inheritDoc}
      */
     public function setSession(SessionInterface $session): void
     {

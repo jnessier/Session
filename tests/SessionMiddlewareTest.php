@@ -11,6 +11,9 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class SessionMiddlewareTest extends TestCase
 {
+    /**
+     * @runInSeparateProcess
+     */
     public function testSessionMiddlware(): void
     {
         $session = new Session();

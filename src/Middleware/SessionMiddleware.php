@@ -20,9 +20,9 @@ final class SessionMiddleware implements MiddlewareInterface
     private $session;
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param SessionInterface $session
+     * @param SessionInterface $session Session
      */
     public function __construct(SessionInterface $session)
     {
@@ -30,10 +30,11 @@ final class SessionMiddleware implements MiddlewareInterface
     }
 
     /**
-     * Process an incoming server request
+     * Process an incoming server request.
      *
-     * @param ServerRequestInterface $request
-     * @param RequestHandlerInterface $handler
+     * @param ServerRequestInterface $request Server request to process
+     * @param RequestHandlerInterface $handler Request handler for the middleware
+     *
      * @return ResponseInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface

@@ -5,11 +5,11 @@ namespace Neoflow\Session;
 
 interface SessionAwareInterface
 {
-
     /**
-     * Set session
+     * Set session.
      *
-     * @param SessionInterface $session
+     * @param SessionInterface $session Session to set
+     *
      * @return void
      */
     public function setSession(SessionInterface $session): void;

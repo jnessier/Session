@@ -2,12 +2,8 @@
 
 namespace Neoflow\Session;
 
-use Neoflow\Data\DataInterface;
-
 interface SessionInterface
 {
-
-
     /**
      * Destroy session.
      *
@@ -37,7 +33,6 @@ interface SessionInterface
      */
     public function getCookie(): array;
 
-
     /**
      * Get session id.
      *
@@ -65,7 +60,6 @@ interface SessionInterface
      */
     public function getStatus(): int;
 
-
     /**
      * Check whether session is started.
      *
@@ -73,23 +67,25 @@ interface SessionInterface
      */
     public function isStarted(): bool;
 
-
     /**
      * Set session cookie.
      *
      * @link https://www.php.net/manual/en/function.session-set-cookie-params.php
      *
      * @param array $options Cookie options
+     *
+     * @return self
      */
-    public function setCookie(array $options): void;
+    public function setCookie(array $options): self;
 
     /**
      * Set session name.
      *
-     * @param string $name Session name
+     * @param string $name Session name to set
+     *
+     * @return self
      */
-    public function setName(string $name): void;
-
+    public function setName(string $name): self;
 
     /**
      * Start session.

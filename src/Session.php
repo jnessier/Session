@@ -2,11 +2,17 @@
 
 namespace Neoflow\Session;
 
-use Neoflow\Data\AbstractData;
+use Neoflow\Data\DataInterface;
+use Neoflow\Data\DataTrait;
 use Neoflow\Session\Exception\SessionException;
 
-class Session extends AbstractData implements SessionInterface
+class Session implements SessionInterface, DataInterface
 {
+    /**
+     * Traits
+     */
+    use DataTrait;
+
     /**
      * @var array
      */
@@ -24,17 +30,15 @@ class Session extends AbstractData implements SessionInterface
         'iniSettings' => []
     ];
 
-
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param array $options
+     * @param array $options Session options
      */
     public function __construct(array $options = [])
     {
         $this->options = array_replace_recursive($this->options, $options);
     }
-
 
     /**
      * {@inheritDoc}
@@ -73,7 +77,6 @@ class Session extends AbstractData implements SessionInterface
     {
         return session_get_cookie_params();
     }
-
 
     /**
      * {@inheritDoc}
@@ -123,7 +126,7 @@ class Session extends AbstractData implements SessionInterface
     /**
      * {@inheritDoc}
      */
-    public function setCookie(array $options): void
+    public function setCookie(array $options): SessionInterface
     {
         session_set_cookie_params($this->options['cookie']);
     }
@@ -133,7 +136,7 @@ class Session extends AbstractData implements SessionInterface
      *
      * @throws SessionException
      */
-    public function setName(string $name): void
+    public function setName(string $name): SessionInterface
     {
         if ($this->isStarted()) {
             throw new SessionException('Set session name failed. Session already started.');
