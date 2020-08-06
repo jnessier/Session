@@ -47,8 +47,18 @@ use Psr\Container\ContainerInterface;
 return [
     // ...
     SessionInterface::class => function () {
-        return new Session([
-            // Session options
+        return new Session([ // Default session options
+            'name' => 'sid',
+            'autoRefresh' => true,
+            'cookie' => [
+                'lifetime' => 3600,
+                'path' => '/',
+                'domain' => null,
+                'secure' => false,
+                'httponly' => true,
+                'samesite' => 'Lax'
+            ],
+            'iniSettings' => []
         ]);
     },
     SessionMiddleware::class => function (ContainerInterface $container) {
@@ -77,7 +87,7 @@ The service `Neoflow\Session\Session` supports the following options:
 | `cookie['secure']` | bool | Set `true` to sent session cookie only  over secure connections | `false` |
 | `cookie['httponly']` | bool | Set `false` to make session cookie accessible for scripting languages | `true` |
 | `cookie['samesite']` | string | Set `"Strict"` to prevent the session cookie be sent along with cross-site requests | `"Lax"` |
-| `iniSettings[]` | array | [PHP session settings](https://www.php.net/manual/en/session.configuration.php), beginning with with `session. | [] |
+| `iniSettings[]` | array | [PHP session settings](https://www.php.net/manual/en/session.configuration.php), without `session. | [] |
 
 When your DI container supports inflectors (e.g. [league/container](https://container.thephpleague.com/3.x/inflectors/)),
  you can optionally register `Neoflow/Session/SessionAwareInterface` as inflector to your container definition.
@@ -88,8 +98,30 @@ Additionally, you can also use `Neoflow/Session/SessionAwareTrait` as a shorthan
 ## Usage
 Examples how to handle the session:
 ```php
-// Destroy session.
-$destroyed = $session->destroy();
+use Neoflow\Session\Session;
+
+// Create new session service.
+$session = new Session([
+    // Session options
+]);
+
+// Set session name.
+$name = 'sid'; // Session name
+$session = $session->setName($name);
+
+// Set session cookie.
+$session = $session->setCookie([
+    // Cookie options
+]);
+
+// Start session.
+$started = $session->start();
+
+// Get session status.
+$status = $session->getStatus();
+
+// Check whether session is started.
+$isStarted = $session->isStarted();
 
 // Generate new session id.
 $id = $session->generateId();
@@ -103,80 +135,53 @@ $id = $session->getId();
 // Get session name.
 $name = $session->getName();
 
-// Get session status.
-$status = $session->getStatus();
-
-// Check whether session is started.
-$isStarted = $session->isStarted();
-
-// Set session cookie.
-$options = [ // Cookie options
-    'lifetime' => 3600,
-    'path' => '/',
-    'domain' => null,
-    'secure' => false,
-    'httponly' => true,
-    'samesite' => 'Lax'
-];
-$session->setCookie($options);
-
-// Set session name.
-$name = 'sid' // Session name
-$session->setName($name);
-
-// Start session.
-$started = $session->start();
+// Destroy session.
+$destroyed = $session->destroy();
 ```
-
-Examples how to manage the session data:
-
-T B D
-
+Examples how to access and manage the data stored in the session:
 ```php
-// Get session value by key, or default value when key doesn't exists 
-$value = $session->get('key', 'default');
+// Get value by key.
+$default = null; // Default value, when key doesn't exists
+$value = $session->getValue('key', $default);
+   
+// Pull value by key and delete it afterwards.
+$default = null; // Default value, when key doesn't exists
+$value = $session->pullValue('key', $default);
 
-// Check whether session value exists by key
-$exists = $session->exists('key');
+// Set value by key.
+$overwrite = true; // Set FALSE to prevent overwrite existing value
+$session = $session->setValue('key', 'value', $overwrite);
 
-// Set key and value of session data
-$overwrite = true;
-$session = $session->set('key', 'value', $overwrite);
+// Check whether value exists by key.
+$valueExists = $session->hasValue('key');
+   
+// Delete value by key.
+$session->deleteValue('key');
 
-// Push session value to the end of an indexed array by key
-$session->set('array', []);
-$session->push('array', 'value1');
+// Count number of values.
+$numberOfValues = $session->countValues();
 
-// Check whether session value is empty
-$empty = $session->empty('key');
+// Get values as array.
+$array = $session->getValues();
 
-// Delete session value by key
-$deleted = $session->delete('key');
+// Iterate trough values.
+$session->eachValue(function ($value, string $key) {
+    // Callback for each key/value pair
+});
 
-// Merge recursively multiple keys and values of session data
-$recursive = true;
-$flash = $session->merge([
-    'key' => 'value',
-    'key2' => [
-       'key3' => 'value3'     
-    ]
+// Clear values.
+$session = $session->clearValues();
+
+// Replace values. Existing values with similar keys will be overwritten.
+$recursive = true; // Set FALSE to prevent recursive merge
+$session = $session->replaceValues([
+    // Array with key/value pairs
 ], $recursive);
 
-// Get session data as array
-$array = $session->toArray();
-
-// Apply a callback with arguments to the session data
-$result = $session->apply(function (Neoflow\Session\SessionInterface $session, string $arg1, string $arg2) {
-    // Your custom code
-}, [
-    'arg1',
-    'arg2'
+// Set array as values. Existing data will be overwritten.
+$session = $session->setValues([
+    // Array with key/value pairs
 ]);
-
-// Iterate trough the session data
-$result = $session->each(function (string $key, $value) {
-    // Your custom code
-});
 ```
 
 ## Contributors
@@ -187,17 +192,7 @@ If you would like to see this library develop further, or if you want to support
  
 [![Donate](https://img.shields.io/badge/Donate-paypal-blue)](https://www.paypal.me/JonathanNessier)
 
-## History
-A long time ago in a galaxy far, far away.... oh sorry, wrong chapter. :stuck_out_tongue_winking_eye: 
-
-Currently, Slim 4 doesn't support an out-of-the-box solution for session handling and flash messages. 
-Sure, there are plenty of composer packages and libraries in the wild of the internet. 
-Unfortunately, none of them has session handling combined with flash messages in an easy and simple way. 
-This circumstance led me to develop this PSR-15 compliant session library for Slim 4. 
-Inspired by the slimness of the framework itself.
-
 ## License
-
 Licensed under [MIT](LICENSE). 
 
 *Made in Switzerland with :cheese: and :heart:*
