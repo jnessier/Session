@@ -5,129 +5,92 @@ namespace Neoflow\Session;
 interface SessionInterface
 {
     /**
-     * Apply a callback with arguments to the session data
+     * Destroy session.
      *
-     * @param callable $callback
-     * @param array $args
-     * @return mixed
-     */
-    public function apply(callable $callback, array $args = []);
-
-    /**
-     * Delete session value by key
-     *
-     * @param string $key
-     * @return self
-     */
-    public function delete(string $key): self;
-
-    /**
-     * Destroy session
+     * @link https://php.net/manual/en/function.session-destroy.php
      *
      * @return bool
      */
     public function destroy(): bool;
 
     /**
-     * Iterate trough the session data
+     * Generate new session id.
      *
-     * @param callable $callback
-     * @return mixed
+     * @link https://php.net/manual/en/function.session-regenerate-id.php
+     *
+     * @param bool $delete Set TRUE to delete old session
+     *
+     * @return string
      */
-    public function each(callable $callback);
+    public function generateId(bool $delete = false): string;
 
     /**
-     * Check whether session value is empty by key
+     * Get session cookie.
      *
-     * @param string $key
-     * @return bool
+     * @link https://www.php.net/manual/en/function.session-get-cookie-params.php
+     *
+     * @return array
      */
-    public function empty(string $key): bool;
+    public function getCookie(): array;
 
     /**
-     * Check whether session value exists by key
+     * Get session id.
      *
-     * @param string $key
-     * @return bool
-     */
-    public function exists(string $key): bool;
-
-    /**
-     * Get flash helper
-     *
-     * @return FlashInterface
-     */
-    public function flash(): FlashInterface;
-
-    /**
-     * Generate new session id
-     *
-     * @param bool $deleteOldSession
-     * @return self
-     */
-    public function generateId(bool $deleteOldSession = false): self;
-
-    /**
-     * Get session value by key, or default value when key doesn't exists
-     *
-     * @param string $key
-     * @param mixed|null $default
-     * @return mixed|null
-     */
-    public function get(string $key, $default = null);
-
-    /**
-     * Get session id
+     * @link https://www.php.net/manual/en/function.session-id.php
      *
      * @return string
      */
     public function getId(): string;
 
     /**
-     * Get session name
+     * Get session name.
+     *
+     * @link https://www.php.net/manual/en/function.session-name.php
      *
      * @return string
      */
     public function getName(): string;
 
     /**
-     * Get session status
+     * Get session status.
+     *
+     * @link https://www.php.net/manual/en/function.session-status.php
      *
      * @return int
      */
     public function getStatus(): int;
 
     /**
-     * Merge multiple keys and values of session data
+     * Check whether session is started.
      *
-     * @param array $data
+     * @return bool
+     */
+    public function isStarted(): bool;
+
+    /**
+     * Set session cookie.
+     *
+     * @link https://www.php.net/manual/en/function.session-set-cookie-params.php
+     *
+     * @param array $options Cookie options
+     *
      * @return self
      */
-    public function merge(array $data): self;
+    public function setCookie(array $options): self;
 
     /**
-     * Push session value to the end of an indexed array by key
+     * Set session name.
      *
-     * @param string $key
-     * @param mixed $value
-     * @return SessionInterface
-     */
-    public function push(string $key, $value): self;
-
-    /**
-     * Set key and value of session data
+     * @param string $name Session name to set
      *
-     * @param string $key
-     * @param mixed $value
-     * @param bool $overwrite
      * @return self
      */
-    public function set(string $key, $value, bool $overwrite = true): self;
+    public function setName(string $name): self;
 
     /**
-     * Get session data as array
+     * Start session.
      *
-     * @return array
+     * @return bool
      */
-    public function toArray(): array;
+    public function start(): bool;
 }

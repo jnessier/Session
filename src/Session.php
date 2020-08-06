@@ -2,143 +2,107 @@
 
 namespace Neoflow\Session;
 
-use Adbar\Dot;
+use Neoflow\Data\DataInterface;
+use Neoflow\Data\DataTrait;
 use Neoflow\Session\Exception\SessionException;
 
-class Session implements SessionInterface
+class Session implements SessionInterface, DataInterface
 {
     /**
-     * @var FlashInterface
+     * Traits
      */
-    protected $flash;
+    use DataTrait;
 
     /**
-     * @var Dot
+     * @var array
      */
-    protected $data;
+    protected $options = [
+        'name' => 'sid',
+        'autoRefresh' => true,
+        'cookie' => [
+            'lifetime' => 3600,
+            'path' => '/',
+            'domain' => null,
+            'secure' => false,
+            'httponly' => true,
+            'samesite' => 'Lax'
+        ],
+        'iniSettings' => []
+    ];
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param FlashInterface $flash
-     * @param string $key
+     * @param array $options Session options
+     */
+    public function __construct(array $options = [])
+    {
+        $this->options = array_replace_recursive($this->options, $options);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @throws SessionException
-     */
-    public function __construct(FlashInterface $flash, string $key = '_sessionData')
-    {
-        if (PHP_SESSION_ACTIVE !== session_status()) {
-            throw new SessionException('Session not started yet.');
-        }
-
-        $this->flash = $flash;
-
-        if (!isset($_SESSION[$key])) {
-            $_SESSION[$key] = [];
-        }
-
-        $this->data = new Dot();
-        $this->data->setReference($_SESSION[$key]);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function apply(callable $callback, array $args = [])
-    {
-        array_unshift($args, $this);
-
-        return call_user_func_array($callback, $args);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function delete(string $key): SessionInterface
-    {
-        $this->data->delete($key);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
      */
     public function destroy(): bool
     {
-        if (PHP_SESSION_ACTIVE === session_status()) {
-            return session_destroy();
+        if (!$this->isStarted()) {
+            throw new SessionException('Destroy session failed. Session not started yet.');
         }
 
-        throw new SessionException('Session already destroyed.');
+        return session_destroy();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws SessionException
+     */
+    public function generateId(bool $delete = false): string
+    {
+        if (!$this->isStarted()) {
+            throw new SessionException('Generate session id failed. Session not started yet.');
+        }
+
+        session_regenerate_id($delete);
+
+        return $this->getId();
     }
 
     /**
      * {@inheritDoc}
      */
-    public function each(callable $callback)
+    public function getCookie(): array
     {
-        return $this->apply(function (Session $session) use ($callback) {
-            $session = $session->toArray();
-
-            return array_walk($session, $callback);
-        });
+        return session_get_cookie_params();
     }
 
     /**
      * {@inheritDoc}
-     */
-    public function empty(string $key): bool
-    {
-        return $this->data->isEmpty($key);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function exists(string $key): bool
-    {
-        return $this->data->has($key);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function flash(): FlashInterface
-    {
-        return $this->flash;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function generateId(bool $deleteOldSession = false): SessionInterface
-    {
-        session_regenerate_id($deleteOldSession);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function get(string $key, $default = null)
-    {
-        return $this->data->get($key, $default);
-    }
-
-    /**
-     * {@inheritDoc}
+     *
+     * @throws SessionException
      */
     public function getId(): string
     {
+        if (!$this->isStarted()) {
+            throw new SessionException('Session id does not exists. Session not started yet.');
+        }
+
         return session_id();
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @throws SessionException
      */
     public function getName(): string
     {
+        if (!$this->isStarted()) {
+            throw new SessionException('Session name does not exists. Session not started yet.');
+        }
+
         return session_name();
     }
 
@@ -153,50 +117,71 @@ class Session implements SessionInterface
     /**
      * {@inheritDoc}
      */
-    public function merge(array $data, bool $recursive = true): SessionInterface
+    public function isStarted(): bool
     {
-        if ($recursive) {
-            $this->data->mergeRecursiveDistinct($data);
-        } else {
-            $this->data->merge($data);
-        }
+        return PHP_SESSION_ACTIVE === $this->getStatus();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setCookie(array $options): SessionInterface
+    {
+        session_set_cookie_params($this->options['cookie']);
 
         return $this;
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @throws SessionException
      */
-    public function push(string $key, $value): SessionInterface
+    public function setName(string $name): SessionInterface
     {
-        if (!is_array($this->get($key))) {
-            throw new SessionException('Key "' . $key . '" does not contain an indexed array to push value.');
+        if ($this->isStarted()) {
+            throw new SessionException('Set session name failed. Session already started.');
         }
 
-        $this->data->push($key, $value);
+        session_name($name);
 
         return $this;
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @throws SessionException
      */
-    public function set(string $key, $value, bool $overwrite = true): SessionInterface
+    public function start(): bool
     {
-        if ($overwrite) {
-            $this->data->set($key, $value);
-        } else {
-            $this->data->add($key, $value);
+        if ($this->isStarted()) {
+            throw new SessionException('Session start failed. Session already started.');
         }
 
-        return $this;
-    }
+        if (is_array($this->options['iniSettings'])) {
+            foreach ($this->options['iniSettings'] as $key => $value) {
+                $key = (string)$key;
+                if (strlen($key)) {
+                    ini_set('session.' . $key, $value);
+                }
+            }
+        }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function toArray(): array
-    {
-        return $this->data->all();
+        $cookieOptions = $this->options['cookie'];
+        if ($this->options['autoRefresh']) {
+            $cookieOptions['lifetime'] = (int)$cookieOptions['lifetime'] + time();
+        }
+        $this->setCookie($cookieOptions);
+
+        $this->setName($this->options['name']);
+
+        $result = session_start();
+
+        if ($result) {
+            $this->setReferencedValues($_SESSION);
+        }
+
+        return $result;
     }
 }

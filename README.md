@@ -5,23 +5,19 @@
 [![Total Downloads](https://poser.pugx.org/neoflow/session/downloads?service=github)](//packagist.org/packages/neoflow/session)
 [![License](https://poser.pugx.org/neoflow/session/license?service=github)](https://packagist.org/packages/neoflow/session)
 
-Session middleware with flash message support for Slim 4 and similar [PSR-15](https://www.php-fig.org/psr/psr-15/)
- compliant frameworks and apps.
+Session service for Slim 4 and similar [PSR-15](https://www.php-fig.org/psr/psr-15/) compliant frameworks and apps.
 
 ## Table of Contents
 - [Requirement](#requirement)
 - [Installation](#installation)
-- [Manual](#manual)
-  - [Middleware](#middleware)
-  - [Helper](#helper)
-    - [Initialization](#initialization)
-    - [Usage](#usage)
+- [Configuration](#configuration)
+- [Usage](#usage)
 - [Contributors](#contributors)
 - [History](#history)
 - [License](#license)
 
 ## Requirement
-* PHP >= 7.2
+* PHP >= 7.3
 
 ## Installation
 You have 2 options to install this library.
@@ -33,224 +29,161 @@ composer require neoflow/session
 
 Or manually add this line to the `require` block in your `composer.json`:
 ```json
-"neoflow/session": "^1.0.0"
+"neoflow/session": "^2.0.0"
 ```
 
-## Manual
-The following instructions based on Slim 4, but should be adaptable for any PSR-15 compliant frameworks and apps.
+## Configuration
+The following instructions based on [Slim 4](http://www.slimframework.com), in combination with
+ [PHP-DI](https://php-di.org), but should be adaptable for any PSR-11/PSR-15 compliant frameworks and libraries.
 
-### Middleware
-Add the `Neoflow\Session\Middleware\SessionMiddleware` to the middleware dispatcher. 
-The middleware handles your session configuration and starts the session, after each request. 
-
+Add the service `Neoflow\Session\Session` and middleware `Neoflow\Session\Middleware\SessionMiddleware`
+ to the container definitions...
 ```php
-$app->add(new Neoflow\Session\Middleware\SessionMiddleware([
-    // your custom session options
-]));
+use Neoflow\Session\Session;
+use Neoflow\Session\SessionInterface;
+use Neoflow\Session\Middleware\SessionMiddleware;
+use Psr\Container\ContainerInterface;
+
+return [
+    // ...
+    SessionInterface::class => function () {
+        return new Session([ // Default session options
+            'name' => 'sid',
+            'autoRefresh' => true,
+            'cookie' => [
+                'lifetime' => 3600,
+                'path' => '/',
+                'domain' => null,
+                'secure' => false,
+                'httponly' => true,
+                'samesite' => 'Lax'
+            ],
+            'iniSettings' => []
+        ]);
+    },
+    SessionMiddleware::class => function (ContainerInterface $container) {
+        $session = $container->get(SessionInterface::class);
+        return new SessionMiddleware($session);
+    },
+    // ...
+];
 ```
-The following options are supported:
+...and register the middleware, to autostart the session when it got dispatched. 
+```php
+use Neoflow\Session\Middleware\SessionMiddleware;
+
+$app->add(SessionMiddleware::class);
+```
+
+The service `Neoflow\Session\Session` supports the following options:
 
 | Key | Type | Description | Default |
 |---|---|---|---|
-| ```name``` | string | Name of the session cookie. | SID |
-| ```lifetime``` | int | Session lifetime in seconds. | 3600 |
-| ```autoRefresh``` | bool | Refresh of session lifetime after each request. | true |
-| ```withAttribute``` | bool | Helper class as request attribute. | false |
-| ```sessionKey``` | string | Key for session data. | _sessionData |
-| ```flashKey``` | string | Key for flash messages.  | _flashMessages |
+| `name` | string | Name of the session cookie. | `"sid"` |
+| `autoRefresh` | bool | Refresh of session lifetime after each request. | `true` |
+| `cookie['lifetime']` | int | Lifetime in seconds of the session cookie in seconds | `3600` |
+| `cookie['path']` | string | Path to set in the session cookie | `"/"` |
+| `cookie['domain']` | string/null | Domain to set in the session cookie | `null` |
+| `cookie['secure']` | bool | Set `true` to sent session cookie only  over secure connections | `false` |
+| `cookie['httponly']` | bool | Set `false` to make session cookie accessible for scripting languages | `true` |
+| `cookie['samesite']` | string | Set `"Strict"` to prevent the session cookie be sent along with cross-site requests | `"Lax"` |
+| `iniSettings[]` | array | [PHP session settings](https://www.php.net/manual/en/session.configuration.php), without `session. | [] |
 
-### Helper
-Use `Neoflow\Session\Session` and `Neoflow\Session\Flash` as helper, to get extended functionality for the session
- handling, and the ability to manage and get access to session data and flash messages.
-  
-#### Initialization
-You have 2 options to set up and initialize the helper. 
+When your DI container supports inflectors (e.g. [league/container](https://container.thephpleague.com/3.x/inflectors/)),
+ you can optionally register `Neoflow/Session/SessionAwareInterface` as inflector to your container definition.
 
-Inject `Neoflow\Session\Flash`, add the `Neoflow\Session\Session` to the container...
-```php
-$container = new DI\Container();
-$container
-    ->set('session', function () use ($container) {
-        $flash = new Neoflow\Session\Flash();
-        return new Neoflow\Session\Session($flash);
-    });
-```
-...and use the helper as dependency:
-```php
-$app->get('/', function (Request $request, Response $response) {
-    $session = $this->get('session');
+Additionally, you can also use `Neoflow/Session/SessionAwareTrait` as a shorthand implementation of
+ `Neoflow/Session/SessionAwareInterface`.
 
-    // Your custom code
-
-    return $response;
-});
-```
-Or enable the option `withAttribute` for the `Neoflow\Session\Middleware\SessionMiddleware`...
-```php
-$app->add(new Neoflow\Session\Middleware\SessionMiddleware([
-    'withAttribute' => true
-]));
-```
-...and get the helper as request attribute:
-```php
-$app->get('/', function (Psr\Http\Message\RequestInterface $request, Psr\Http\Message\ResponseInterface $response) {
-    $session = $request->getAttribute('session');
-
-    // Your custom code
-
-    return $response;
-});
-```
-
-**Important:** 
-Don't use both initialization options simultaneously. 
-It's important to set up the helper only once. 
-Otherwise, it can cause data conflicts with the flash messages.
- 
-#### Usage
+## Usage
 Examples how to handle the session:
 ```php
-// Get session id
-$id = $session->getId();
+use Neoflow\Session\Session;
 
-// Generate new session id
-$deleteOldSession = false;
-$session = $session->generateId($deleteOldSession); 
+// Create new session service.
+$session = new Session([
+    // Session options
+]);
 
-// Get session status
+// Set session name.
+$name = 'sid'; // Session name
+$session = $session->setName($name);
+
+// Set session cookie.
+$session = $session->setCookie([
+    // Cookie options
+]);
+
+// Start session.
+$started = $session->start();
+
+// Get session status.
 $status = $session->getStatus();
 
-// Destroy session
-$destroyed = $session->destroy();
+// Check whether session is started.
+$isStarted = $session->isStarted();
 
-// Get session name
+// Generate new session id.
+$id = $session->generateId();
+
+// Get session cookie.
+$cookie = $session->getCookie();
+
+// Get session id.
+$id = $session->getId();
+
+// Get session name.
 $name = $session->getName();
+
+// Destroy session.
+$destroyed = $session->destroy();
 ```
-
-Examples how to manage the session data:
+Examples how to access and manage the data stored in the session:
 ```php
-// Get session value by key, or default value when key doesn't exists 
-$value = $session->get('key', 'default');
+// Get value by key.
+$default = null; // Default value, when key doesn't exists
+$value = $session->getValue('key', $default);
+   
+// Pull value by key and delete it afterwards.
+$default = null; // Default value, when key doesn't exists
+$value = $session->pullValue('key', $default);
 
-// Check whether session value exists by key
-$exists = $session->exists('key');
+// Set value by key.
+$overwrite = true; // Set FALSE to prevent overwrite existing value
+$session = $session->setValue('key', 'value', $overwrite);
 
-// Set key and value of session data
-$overwrite = true;
-$session = $session->set('key', 'value', $overwrite);
+// Check whether value exists by key.
+$valueExists = $session->hasValue('key');
+   
+// Delete value by key.
+$session->deleteValue('key');
 
-// Push session value to the end of an indexed array by key
-$session->set('array', []);
-$session->push('array', 'value1');
+// Count number of values.
+$numberOfValues = $session->countValues();
 
-// Check whether session value is empty
-$empty = $session->empty('key');
+// Get values as array.
+$array = $session->getValues();
 
-// Delete session value by key
-$deleted = $session->delete('key');
+// Iterate trough values.
+$session->eachValue(function ($value, string $key) {
+    // Callback for each key/value pair
+});
 
-// Merge recursively multiple keys and values of session data
-$recursive = true;
-$flash = $session->merge([
-    'key' => 'value',
-    'key2' => [
-       'key3' => 'value3'     
-    ]
+// Clear values.
+$session = $session->clearValues();
+
+// Replace values. Existing values with similar keys will be overwritten.
+$recursive = true; // Set FALSE to prevent recursive merge
+$session = $session->replaceValues([
+    // Array with key/value pairs
 ], $recursive);
 
-// Get session data as array
-$array = $session->toArray();
-
-// Apply a callback with arguments to the session data
-$result = $session->apply(function (Neoflow\Session\SessionInterface $session, string $arg1, string $arg2) {
-    // Your custom code
-}, [
-    'arg1',
-    'arg2'
-]);
-
-// Iterate trough the session data
-$result = $session->each(function (string $key, $value) {
-    // Your custom code
-});
-```
-
-Examples how to get read-only access to the flash messages, set in previous request:
-```php
-// Check whether flash message is empty
-$empty = $session->flash()->empty('key');
-
-// Check whether flash message exists by key
-$exists = $session->flash()->exists('key');
-
-// Get flash message by key, or default value when the key doesn't exists 
-$value = $session->flash()->get('key', 'default');
-
-// Get flash messages as array
-$array = $session->flash()->toArray();
-
-// Iterate trough the flash messages
-$result = $session->flash()->each(function (string $key, $value) {
-    // Your custom code
-});
-```
-
-Examples how to manage the new flash messages, set for the next request:
-```php
-// Set key and value of new flash message
-$overwrite = true;
-$flash = $session->flash()->setNew('key', 'value', $overwrite);
-
-// Push new flash message to the end of an indexed array by key
-$session->flash()->setNew('array', []);
-$session->flash()->pushNew('array', 'value1');
-
-// Check whether new flash message is empty
-$empty = $session->flash()->emptyNew('key');
-
-// Check whether new flash message exists by key
-$exists = $session->flash()->existsNew('key');
-
-// Get new flash message by key, or default value when the key doesn't exists
-$value = $session->flash()->getNew('key', 'default');
-
-// Delete new flash message by key
-$deleted = $session->flash()->deleteNew('key');
-
-// Merge recursively multiple keys and values of new flash messages
-$recursive = true;
-$flash = $session->flash()->mergeNew([
-    'key' => 'value',
-    'key2' => [
-       'key3' => 'value3'     
-    ]
-], $recursive);
-
-// Get new flash messages as array
-$array = $session->flash()->toArrayNew();
-
-// Iterate trough the new flash messages
-$result = $session->flash()->eachNew(function (string $key, $value) {
-    // Your custom code
-});
-```
-
-Examples how to manage both types of flash messages:
-```php
-// Apply a callback with arguments to the flash helper
-$result = $session->flash()->apply(function (Neoflow\Session\FlashInterface $flash, string $arg, string $arg2) {
-   // Your custom code
-}, [
-   'arg',
-   'arg2'
+// Set array as values. Existing data will be overwritten.
+$session = $session->setValues([
+    // Array with key/value pairs
 ]);
 ```
 
-**Please note**
-`Neoflow\Session\Flash` and `Neoflow\Session\Session` as helpers have both
- [adbario/php-dot-notation](https://github.com/adbario/php-dot-notation) implemented and support data access and
-  manipulation with dot notation. Take a look into the readme of the library to learn more about the usage.
-  
 ## Contributors
 * Jonathan Nessier, [Neoflow](https://www.neoflow.ch)
 
@@ -259,17 +192,7 @@ If you would like to see this library develop further, or if you want to support
  
 [![Donate](https://img.shields.io/badge/Donate-paypal-blue)](https://www.paypal.me/JonathanNessier)
 
-## History
-A long time ago in a galaxy far, far away.... oh sorry, wrong chapter. :stuck_out_tongue_winking_eye: 
-
-Currently, Slim 4 doesn't support an out-of-the-box solution for session handling and flash messages. 
-Sure, there are plenty of composer packages and libraries in the wild of the internet. 
-Unfortunately, none of them has session handling combined with flash messages in an easy and simple way. 
-This circumstance led me to develop this PSR-15 compliant session library for Slim 4. 
-Inspired by the slimness of the framework itself.
-
 ## License
-
 Licensed under [MIT](LICENSE). 
 
 *Made in Switzerland with :cheese: and :heart:*

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit bootstrap="vendor/autoload.php" processIsolation="true">
+<phpunit bootstrap="vendor/autoload.php">
     <testsuites>
         <testsuite name="All tests">
             <directory>./tests</directory>
