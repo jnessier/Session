@@ -335,16 +335,16 @@
         },
         {
             "name": "neoflow/data",
-            "version": "0.2.1",
+            "version": "0.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Neoflow/Data.git",
-                "reference": "70653c9d050fe453420d8d5968d0f7490fbb5a07"
+                "reference": "4d318f64eb5fde131b2a11193facd0b8560f6088"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Neoflow/Data/zipball/70653c9d050fe453420d8d5968d0f7490fbb5a07",
-                "reference": "70653c9d050fe453420d8d5968d0f7490fbb5a07",
+                "url": "https://api.github.com/repos/Neoflow/Data/zipball/4d318f64eb5fde131b2a11193facd0b8560f6088",
+                "reference": "4d318f64eb5fde131b2a11193facd0b8560f6088",
                 "shasum": ""
             },
             "require": {
@@ -373,7 +373,7 @@
                 }
             ],
             "description": "Data handler for arrays.",
-            "time": "2020-08-06T08:43:53+00:00"
+            "time": "2020-08-06T13:34:59+00:00"
         },
         {
             "name": "paragonie/random_compat",

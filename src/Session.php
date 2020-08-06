@@ -122,13 +122,14 @@ class Session implements SessionInterface, DataInterface
         return PHP_SESSION_ACTIVE === $this->getStatus();
     }
 
-
     /**
      * {@inheritDoc}
      */
     public function setCookie(array $options): SessionInterface
     {
         session_set_cookie_params($this->options['cookie']);
+
+        return $this;
     }
 
     /**
@@ -143,8 +144,9 @@ class Session implements SessionInterface, DataInterface
         }
 
         session_name($name);
-    }
 
+        return $this;
+    }
 
     /**
      * {@inheritDoc}
@@ -177,7 +179,7 @@ class Session implements SessionInterface, DataInterface
         $result = session_start();
 
         if ($result) {
-            $this->values = &$_SESSION;
+            $this->setReferencedValues($_SESSION);
         }
 
         return $result;
