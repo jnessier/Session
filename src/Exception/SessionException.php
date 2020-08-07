@@ -2,8 +2,8 @@
 
 namespace Neoflow\Session\Exception;
 
-use RuntimeException;
+use Exception;
 
-class SessionException extends RuntimeException
+class SessionException extends Exception
 {
 }

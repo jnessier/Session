@@ -98,13 +98,6 @@ Additionally, you can also use `Neoflow/Session/SessionAwareTrait` as a shorthan
 ## Usage
 Examples how to handle the session:
 ```php
-use Neoflow\Session\Session;
-
-// Create new session service.
-$session = new Session([
-    // Session options
-]);
-
 // Set session name.
 $name = 'sid'; // Session name
 $session = $session->setName($name);
@@ -138,47 +131,39 @@ $name = $session->getName();
 // Destroy session.
 $destroyed = $session->destroy();
 ```
+
 Examples how to access and manage the data stored in the session:
 ```php
-// Get value by key.
+// Get value by key from session data.
 $default = null; // Default value, when key doesn't exists
 $value = $session->getValue('key', $default);
-   
-// Pull value by key and delete it afterwards.
-$default = null; // Default value, when key doesn't exists
-$value = $session->pullValue('key', $default);
 
-// Set value by key.
+// Set value by key to session data.
 $overwrite = true; // Set FALSE to prevent overwrite existing value
 $session = $session->setValue('key', 'value', $overwrite);
 
-// Check whether value exists by key.
+// Check whether value exists by key in session data.
 $valueExists = $session->hasValue('key');
    
-// Delete value by key.
+// Delete value by key from session data.
 $session->deleteValue('key');
 
-// Count number of values.
+// Count number of values of session data.
 $numberOfValues = $session->countValues();
 
-// Get values as array.
-$array = $session->getValues();
+// Get values of session data.
+$values = $session->getValues();
 
-// Iterate trough values.
-$session->eachValue(function ($value, string $key) {
-    // Callback for each key/value pair
-});
-
-// Clear values.
+// Clear values of session data.
 $session = $session->clearValues();
 
-// Replace values. Existing values with similar keys will be overwritten.
-$recursive = true; // Set FALSE to prevent recursive merge
+// Replace values by key in session data. Existing values with similar keys will be overwritten.
+$recursive = true; // Set TRUE to enable recursive replacement
 $session = $session->replaceValues([
     // Array with key/value pairs
 ], $recursive);
 
-// Set array as values. Existing data will be overwritten.
+// Set values to session data. Existing values will be overwritten.
 $session = $session->setValues([
     // Array with key/value pairs
 ]);
