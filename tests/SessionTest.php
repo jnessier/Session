@@ -2,14 +2,10 @@
 
 namespace Neoflow\Session\Test;
 
-use Middlewares\Utils\Dispatcher;
 use Neoflow\Session\Exception\SessionException;
-use Neoflow\Session\Flash;
-use Neoflow\Session\Middleware\SessionMiddleware;
 use Neoflow\Session\Session;
 use Neoflow\Session\SessionInterface;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 
 class SessionTest extends TestCase
 {

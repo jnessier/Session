@@ -2,9 +2,6 @@
 
 namespace Neoflow\Session\Middleware;
 
-use Neoflow\Session\Exception\SessionException;
-use Neoflow\Session\Flash;
-use Neoflow\Session\Session;
 use Neoflow\Session\SessionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

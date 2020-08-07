@@ -6,8 +6,6 @@ use Middlewares\Utils\Dispatcher;
 use Neoflow\Session\Middleware\SessionMiddleware;
 use Neoflow\Session\Session;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 
 class SessionMiddlewareTest extends TestCase
 {
