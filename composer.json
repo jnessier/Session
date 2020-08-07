@@ -25,11 +25,10 @@
     "run phpunit": "phpunit --configuration phpunit.xml.dist"
   },
   "require": {
-    "psr/http-server-middleware": "^1.0",
-    "php": "^7.3",
-    "neoflow/data": "^0.2"
+    "php": "^7.3"
   },
   "require-dev": {
+    "psr/http-server-middleware": "^1.0",
     "psr/http-message": "^1.0",
     "friendsofphp/php-cs-fixer": "^2.16",
     "slim/psr7": "^1.1",
