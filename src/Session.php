@@ -77,7 +77,7 @@ final class Session implements SessionInterface
     public function destroy(): bool
     {
         if (!$this->isStarted()) {
-            throw new SessionException('Destroy session failed. Session not started yet.');
+            throw new SessionException('Cannot destroy the session, when the session has not started yet.');
         }
 
         return session_destroy();
@@ -91,7 +91,7 @@ final class Session implements SessionInterface
     public function generateId(bool $delete = false): string
     {
         if (!$this->isStarted()) {
-            throw new SessionException('Generate session id failed. Session not started yet.');
+            throw new SessionException('Cannot generate the session id, when the session has not started yet.');
         }
 
         session_regenerate_id($delete);
@@ -109,29 +109,17 @@ final class Session implements SessionInterface
 
     /**
      * {@inheritDoc}
-     *
-     * @throws SessionException
      */
     public function getId(): string
     {
-        if (!$this->isStarted()) {
-            throw new SessionException('Session id does not exists. Session not started yet.');
-        }
-
         return session_id();
     }
 
     /**
      * {@inheritDoc}
-     *
-     * @throws SessionException
      */
     public function getName(): string
     {
-        if (!$this->isStarted()) {
-            throw new SessionException('Session name does not exists. Session not started yet.');
-        }
-
         return session_name();
     }
 
@@ -198,6 +186,10 @@ final class Session implements SessionInterface
      */
     public function setCookie(array $options): SessionInterface
     {
+        if ($this->isStarted()) {
+            throw new SessionException('Cannot set the cookie options, when the session has already started.');
+        }
+
         session_set_cookie_params($this->options['cookie']);
 
         return $this;
@@ -211,7 +203,7 @@ final class Session implements SessionInterface
     public function setName(string $name): SessionInterface
     {
         if ($this->isStarted()) {
-            throw new SessionException('Set session name failed. Session already started.');
+            throw new SessionException('Cannot set the session name, when the session has already started.');
         }
 
         session_name($name);
@@ -249,7 +241,7 @@ final class Session implements SessionInterface
     public function start(): bool
     {
         if ($this->isStarted()) {
-            throw new SessionException('Session start failed. Session already started.');
+            throw new SessionException('Cannot start the session, when the session already has started.');
         }
 
         if (is_array($this->options['iniSettings'])) {

@@ -22,15 +22,11 @@ Session service for Slim 4 and similar [PSR-15](https://www.php-fig.org/psr/psr-
 ## Installation
 You have 2 options to install this library.
 
-Via Composer:
+Via composer...
 ```bash
 composer require neoflow/session
 ```
-
-Or manually add this line to the `require` block in your `composer.json`:
-```json
-"neoflow/session": "^2.0.0"
-```
+...or manually download the latest release from [here](https://github.com/Neoflow/Session/releases/).
 
 ## Configuration
 The following instructions based on [Slim 4](http://www.slimframework.com), in combination with
@@ -132,38 +128,38 @@ $name = $session->getName();
 $destroyed = $session->destroy();
 ```
 
-Examples how to access and manage the data stored in the session:
+Examples how to access and manage the values of the session:
 ```php
-// Get value by key from session data.
+// Get session value by key.
 $default = null; // Default value, when key doesn't exists
 $value = $session->getValue('key', $default);
 
-// Set value by key to session data.
+// Set session value by key.
 $overwrite = true; // Set FALSE to prevent overwrite existing value
 $session = $session->setValue('key', 'value', $overwrite);
 
-// Check whether value exists by key in session data.
+// Check whether session value exists by key.
 $valueExists = $session->hasValue('key');
    
-// Delete value by key from session data.
+// Delete session value by key.
 $session->deleteValue('key');
 
-// Count number of values of session data.
+// Count number of session values.
 $numberOfValues = $session->countValues();
 
-// Get values of session data.
+// Get session values.
 $values = $session->getValues();
 
-// Clear values of session data.
+// Clear session values.
 $session = $session->clearValues();
 
-// Replace values by key in session data. Existing values with similar keys will be overwritten.
+// Replace session values by key. Existing values with similar keys will be overwritten.
 $recursive = true; // Set TRUE to enable recursive replacement
 $session = $session->replaceValues([
     // Array with key/value pairs
 ], $recursive);
 
-// Set values to session data. Existing values will be overwritten.
+// Set session values. Existing values will be overwritten.
 $session = $session->setValues([
     // Array with key/value pairs
 ]);

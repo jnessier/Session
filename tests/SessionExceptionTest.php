@@ -22,7 +22,7 @@ class SessionExceptionTest extends TestCase
     public function testDestroyInvalid(): void
     {
         $this->expectException(SessionException::class);
-        $this->expectExceptionMessage('Destroy session failed. Session not started yet.');
+        $this->expectExceptionMessage('Cannot destroy the session, when the session has not started yet.');
 
         $this->session->destroy();
     }
@@ -30,27 +30,24 @@ class SessionExceptionTest extends TestCase
     public function testGenerateIdInvalid(): void
     {
         $this->expectException(SessionException::class);
-        $this->expectExceptionMessage('Generate session id failed. Session not started yet.');
+        $this->expectExceptionMessage('Cannot generate the session id, when the session has not started yet.');
 
         $this->session->generateId();
     }
 
-
-    public function testGetIdInvalid(): void
+    /**
+     * @runInSeparateProcess
+     */
+    public function testSetCookieInvalid(): void
     {
+        $this->session->start();
+
         $this->expectException(SessionException::class);
-        $this->expectExceptionMessage('Session id does not exists. Session not started yet.');
+        $this->expectExceptionMessage('Cannot set the cookie options, when the session has already started.');
 
-        $this->session->getId();
-    }
-
-
-    public function testGetNameInvalid(): void
-    {
-        $this->expectException(SessionException::class);
-        $this->expectExceptionMessage('Session name does not exists. Session not started yet.');
-
-        $this->session->getName();
+        $this->session->setCookie([
+            'lifetime' => 1440
+        ]);
     }
 
     /**
@@ -61,7 +58,7 @@ class SessionExceptionTest extends TestCase
         $this->session->start();
 
         $this->expectException(SessionException::class);
-        $this->expectExceptionMessage('Set session name failed. Session already started.');
+        $this->expectExceptionMessage('Cannot set the session name, when the session has already started.');
 
         $this->session->setName('foo bar');
     }
@@ -74,7 +71,7 @@ class SessionExceptionTest extends TestCase
         $this->session->start();
 
         $this->expectException(SessionException::class);
-        $this->expectExceptionMessage('Session start failed. Session already started.');
+        $this->expectExceptionMessage('Cannot start the session, when the session already has started.');
 
         $this->session->start();
     }

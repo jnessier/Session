@@ -5,21 +5,21 @@ namespace Neoflow\Session;
 interface SessionInterface
 {
     /**
-     * Clear values of session data.
+     * Clear session values.
      *
      * @return self
      */
     public function clearValues(): SessionInterface;
 
     /**
-     * Count number of values of session data.
+     * Count number of session values.
      *
      * @return int
      */
     public function countValues(): int;
 
     /**
-     * Delete value by key from session data.
+     * Delete session value by key.
      *
      * @param string $key Key as identifier of the value
      *
@@ -84,7 +84,7 @@ interface SessionInterface
     public function getStatus(): int;
 
     /**
-     * Get value by key of session data.
+     * Get session value by key.
      *
      * @param string $key Key as identifier of the value
      * @param mixed $default Default value, when key doesn't exists
@@ -94,14 +94,14 @@ interface SessionInterface
     public function getValue(string $key, $default = null);
 
     /**
-     * Get values of session data.
+     * Get session values.
      *
      * @return array
      */
     public function getValues(): array;
 
     /**
-     * Check whether value exists by key in session data.
+     * Check whether session value exists by key.
      *
      * @param string $key Key as identifier of the value
      *
@@ -117,7 +117,7 @@ interface SessionInterface
     public function isStarted(): bool;
 
     /**
-     * Replace values by key in session data. Existing values with similar keys will be overwritten.
+     * Replace session values by key. Existing values with similar keys will be overwritten.
      *
      * @param array $values Array with key/value pairs
      * @param bool $recursive Set TRUE to enable recursive merge
@@ -147,7 +147,7 @@ interface SessionInterface
     public function setName(string $name): self;
 
     /**
-     * Set value by key to session data.
+     * Set session value by key.
      *
      * @param string $key Key as identifier of the value
      * @param mixed $value Value to set
@@ -158,7 +158,7 @@ interface SessionInterface
     public function setValue(string $key, $value, bool $overwrite = true): SessionInterface;
 
     /**
-     * Set values to session data. Existing values will be overwritten.
+     * Set session values. Existing values will be overwritten.
      *
      * @param array $values Values to set
      *
