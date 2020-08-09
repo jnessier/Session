@@ -83,7 +83,7 @@ The service `Neoflow\Session\Session` supports the following options:
 | `cookie['secure']` | bool | Set `true` to sent session cookie only  over secure connections | `false` |
 | `cookie['httponly']` | bool | Set `false` to make session cookie accessible for scripting languages | `true` |
 | `cookie['samesite']` | string | Set `"Strict"` to prevent the session cookie be sent along with cross-site requests | `"Lax"` |
-| `iniSettings[]` | array | [PHP session settings](https://www.php.net/manual/en/session.configuration.php), without `session. | [] |
+| `iniSettings[]` | array | [PHP session settings](https://www.php.net/manual/en/session.configuration.php), without `session.` | `[]` |
 
 When your DI container supports inflectors (e.g. [league/container](https://container.thephpleague.com/3.x/inflectors/)),
  you can optionally register `Neoflow/Session/SessionAwareInterface` as inflector to your container definition.
