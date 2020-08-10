@@ -12,6 +12,7 @@ Session service for Slim 4 and similar [PSR-15](https://www.php-fig.org/psr/psr-
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Usage](#usage)
+- [Flash messages](#flash-messages)
 - [Contributors](#contributors)
 - [History](#history)
 - [License](#license)
@@ -164,6 +165,15 @@ $session = $session->setValues([
     // Array with key/value pairs
 ]);
 ```
+
+## Flash messages
+The first version of this library had built-in support for flash messages.
+But to comply with the design principle of separation of concerns, the code of the flash messages was move into a
+ standalone library, called [Neoflow\FlashMessages](https://github.com/Neoflow/FlashMessages).
+
+If you need support for flash messages, you can easily combine both libraries as composer packages. 
+The integration and usage of [Neoflow\FlashMessages](https://github.com/Neoflow/FlashMessages) is very similar to the
+ current library. 
 
 ## Contributors
 * Jonathan Nessier, [Neoflow](https://www.neoflow.ch)

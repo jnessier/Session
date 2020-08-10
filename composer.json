@@ -1,6 +1,6 @@
 {
   "name": "neoflow/session",
-  "description": "Session middleware with flash message support for Slim 4 and similar PSR-15 compliant frameworks and apps.",
+  "description": "Session service for Slim 4 and similar PSR-15 compliant frameworks and apps.",
   "license": "MIT",
   "minimum-stability": "stable",
   "authors": [
