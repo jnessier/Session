@@ -1,12 +1,12 @@
 <?php
 
-PhpCsFixer\Config::create()->setCacheFile(__DIR__.'/.php_cs.cache');
-
 // Define excludes
+use PhpCsFixer\Finder;
+
 $excludes = [];
 
 // Create finder
-$finder = PhpCsFixer\Finder::create()
+$finder = (new Finder())
     ->exclude($excludes)
     ->in([
         './src',
@@ -14,7 +14,8 @@ $finder = PhpCsFixer\Finder::create()
     ]);
 
 // Create config
-return PhpCsFixer\Config::create()
+return (new PhpCsFixer\Config())
+    ->setCacheFile(__DIR__ . '/.php-cs-fixer.cache')
     ->setRiskyAllowed(true)
     ->setRules([
         '@PSR1' => true,
