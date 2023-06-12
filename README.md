@@ -1,3 +1,8 @@
+# This project is no longer maintained.
+Please use other solutions for session handling on PHP.
+
+------------------------------------------------------------
+
 # Session
 [![Build Status](https://travis-ci.org/Neoflow/Session.svg?branch=master&service=github)](https://travis-ci.org/Neoflow/Session)
 [![Coverage Status](https://coveralls.io/repos/github/Neoflow/Session/badge.svg?branch=master&service=github)](https://coveralls.io/github/Neoflow/Session?branch=master)
